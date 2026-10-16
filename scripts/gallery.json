@@ -1,0 +1,16 @@
+[
+  { "repo": "facebook/react", "language": "JavaScript", "exclude": ["fixtures"] },
+  { "repo": "vuejs/core", "language": "TypeScript" },
+  { "repo": "sveltejs/svelte", "language": "JavaScript", "exclude": ["documentation", "playgrounds"] },
+  { "repo": "vitejs/vite", "language": "TypeScript", "exclude": ["playground"] },
+  { "repo": "tailwindlabs/tailwindcss", "language": "TypeScript" },
+  { "repo": "expressjs/express", "language": "JavaScript" },
+  { "repo": "django/django", "language": "Python", "exclude": ["docs"] },
+  { "repo": "pallets/flask", "language": "Python" },
+  { "repo": "fastapi/fastapi", "language": "Python", "exclude": ["docs_src", "docs"] },
+  { "repo": "rails/rails", "language": "Ruby" },
+  { "repo": "gin-gonic/gin", "language": "Go" },
+  { "repo": "ollama/ollama", "language": "Go", "exclude": ["llama/llama.cpp", "ml/backend/ggml/ggml"] },
+  { "repo": "tokio-rs/tokio", "language": "Rust" },
+  { "repo": "astral-sh/uv", "language": "Rust" }
+]

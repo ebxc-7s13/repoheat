@@ -29,6 +29,14 @@ export function repoRoot(cwd: string): string {
   }
 }
 
+/**
+ * Path of `cwd` relative to the repo root, as git sees it ("packages/api").
+ * Asking git avoids path mismatches from symlinks or Windows short names.
+ */
+export function repoPrefix(cwd: string): string {
+  return git(cwd, ['rev-parse', '--show-prefix']).trim().replace(/\/$/, '');
+}
+
 export function currentBranch(root: string): string {
   try {
     return git(root, ['rev-parse', '--abbrev-ref', 'HEAD']).trim();

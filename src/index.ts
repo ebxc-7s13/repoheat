@@ -1,8 +1,8 @@
 import { existsSync, readFileSync, statSync } from 'node:fs';
-import { basename, join, relative, resolve, sep } from 'node:path';
+import { basename, join, resolve } from 'node:path';
 import { analyze } from './analyze.js';
 import { createFilter, type FilterOptions } from './filters.js';
-import { currentBranch, headSha, readLog, repoRoot, trackedFiles } from './git.js';
+import { currentBranch, headSha, readLog, repoPrefix, repoRoot, trackedFiles } from './git.js';
 import type { AnalyzeOptions, Report, SourceFile } from './types.js';
 
 export * from './types.js';
@@ -43,8 +43,7 @@ function ignoreFile(root: string): string[] {
 export function scan(opts: ScanOptions = {}): Report {
   const target = resolve(opts.cwd ?? process.cwd());
   const root = resolve(repoRoot(target));
-  let scope = relative(root, target).split(sep).join('/');
-  if (scope.startsWith('..')) scope = '';
+  const scope = repoPrefix(target);
 
   const filter = createFilter({ ...opts, exclude: [...(opts.exclude ?? []), ...ignoreFile(root)] });
   const inScope = (p: string) => (!scope || p.startsWith(scope + '/')) && filter(p);

@@ -46,9 +46,11 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsc -p tsconfig.json --watch",
+    "prepare": "npm run build",
     "test": "npm run build && node --test test/unit.test.js test/cli.test.js",
     "start": "node dist/cli.js",
-    "prepublishOnly": "npm test"
+    "prepublishOnly": "npm test",
+    "site": "npm run build && node scripts/build-site.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

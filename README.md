@@ -18,7 +18,7 @@ npx repoheat
 
 <a href="https://ebxc-7s13.github.io/repoheat/demo.html"><img src="docs/assets/screenshot.png" alt="repoheat heatmap of the Vite repository: each rectangle is a file sized by lines of code and coloured by how hot it is" width="900"></a>
 
-<sub>The Vite codebase, last 12 months. <a href="https://ebxc-7s13.github.io/repoheat/demo.html"><b>Open the interactive demo →</b></a></sub>
+<sub>The Vite codebase, last 12 months. <a href="https://ebxc-7s13.github.io/repoheat/demo.html"><b>Open the interactive demo →</b></a> · <a href="https://ebxc-7s13.github.io/repoheat/gallery/"><b>See React, Django, Rails and more →</b></a></sub>
 
 </div>
 
@@ -60,6 +60,8 @@ npx repoheat
 ```
 
 Then open `repoheat.html` (or add `--open`) to explore the map.
+
+Prefer a global install? `npm i -g repoheat`, then run `repoheat` anywhere. Requires Node 18.3+ and git.
 
 ## What you get
 
@@ -199,6 +201,10 @@ CI checkouts are shallow by default. Use `actions/checkout` with `fetch-depth: 0
 | Free & open source | ✅ | ✅ | ✅ | ❌ commercial |
 
 CodeScene and code-maat are the deeper, more established tools. repoheat aims to be the fastest way to get the answer and to share it.
+
+## Gallery
+
+The [hotspot gallery](https://ebxc-7s13.github.io/repoheat/gallery/) shows heatmaps of React, Vue, Svelte, Vite, Tailwind, Express, Django, Flask, FastAPI, Rails, Gin, Ollama, Tokio and uv. A scheduled GitHub Action rebuilds it every week. Want another project in it? Add it to [`scripts/gallery.json`](scripts/gallery.json) and open a PR.
 
 ## Share your heatmap 🔥
 

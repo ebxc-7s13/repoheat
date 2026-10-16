@@ -25,6 +25,8 @@ You need Node 18.3+ and git. There are no runtime dependencies, and we'd like to
 | `src/report/` | Terminal, Markdown and HTML renderers. |
 | `assets/report.html` | The interactive heatmap (vanilla JS, no build step). The report data is injected into it. |
 | `test/` | Unit tests and end-to-end CLI tests that build throwaway git repos. |
+| `docs/` | The website (GitHub Pages). |
+| `scripts/build-site.mjs` | Builds the website plus the gallery of popular repos listed in `scripts/gallery.json`. Try `npm run site -- --only expressjs/express`. |
 
 To work on the heatmap, generate a report and refresh it in your browser after each edit:
 
