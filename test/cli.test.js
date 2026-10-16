@@ -31,7 +31,9 @@ function write(path, content) {
 }
 
 function run(args, cwd = repo) {
-  return spawnSync(process.execPath, [CLI, ...args], { cwd, encoding: 'utf8', env: { ...process.env, NO_COLOR: '1' } });
+  // Don't inherit colour settings from the developer's terminal.
+  const { FORCE_COLOR, ...env } = process.env;
+  return spawnSync(process.execPath, [CLI, ...args], { cwd, encoding: 'utf8', env: { ...env, NO_COLOR: '1' } });
 }
 
 before(() => {
@@ -72,6 +74,21 @@ describe('cli', () => {
     assert.doesNotMatch(res.stdout, /\u001b\[/, 'NO_COLOR is respected');
     const html = readFileSync(join(repo, 'repoheat.html'), 'utf8');
     assert.match(html, /"name":"repoheat"/);
+  });
+
+  it('lets NO_COLOR win over FORCE_COLOR', () => {
+    const res = spawnSync(process.execPath, [CLI, '--no-html'], {
+      cwd: repo,
+      encoding: 'utf8',
+      env: { ...process.env, NO_COLOR: '1', FORCE_COLOR: '1' },
+    });
+    assert.doesNotMatch(res.stdout, /\[/);
+    const forced = spawnSync(process.execPath, [CLI, '--no-html'], {
+      cwd: repo,
+      encoding: 'utf8',
+      env: { ...process.env, NO_COLOR: '', FORCE_COLOR: '1' },
+    });
+    assert.match(forced.stdout, /\[/);
   });
 
   it('emits JSON without writing HTML', () => {

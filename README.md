@@ -8,6 +8,7 @@
 One command. Any language. Nothing leaves your machine.
 
 [![npm](https://img.shields.io/npm/v/repoheat?color=f97316)](https://www.npmjs.com/package/repoheat)
+[![downloads](https://img.shields.io/npm/dm/repoheat?color=f97316)](https://www.npmjs.com/package/repoheat)
 [![CI](https://github.com/ebxc-7s13/repoheat/actions/workflows/ci.yml/badge.svg)](https://github.com/ebxc-7s13/repoheat/actions/workflows/ci.yml)
 [![zero dependencies](https://img.shields.io/badge/dependencies-0-success)](package.json)
 [![license](https://img.shields.io/github/license/ebxc-7s13/repoheat)](LICENSE)
@@ -61,7 +62,7 @@ npx repoheat
 
 Then open `repoheat.html` (or add `--open`) to explore the map.
 
-Prefer a global install? `npm i -g repoheat`, then run `repoheat` anywhere. You can also run the latest code straight from GitHub with `npx github:ebxc-7s13/repoheat`. Requires Node 18.3+ and git.
+Prefer a global install? `npm i -g repoheat`, then run `repoheat` anywhere. To try unreleased changes, run it straight from GitHub with `npx github:ebxc-7s13/repoheat`. Requires Node 18.3+ and git.
 
 ## What you get
 

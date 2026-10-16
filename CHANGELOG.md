@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2
+
+- First release on npm: `npx repoheat` now works everywhere.
+- `NO_COLOR` always disables colour, even when `FORCE_COLOR` is set; `FORCE_COLOR=0` turns colour off.
+
 ## 0.1.1
 
 - GitHub Action now builds and runs its own code, so it works without the npm package. Pass `version` to run a specific npm release instead.

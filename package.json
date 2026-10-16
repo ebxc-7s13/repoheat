@@ -1,6 +1,6 @@
 {
   "name": "repoheat",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Find the files that cause most of your bugs. One command, any language, nothing leaves your machine.",
   "keywords": [
     "git",

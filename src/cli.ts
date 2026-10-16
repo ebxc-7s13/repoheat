@@ -116,9 +116,9 @@ function main(argv: string[]): number {
   if (values.json) process.stdout.write(JSON.stringify(report, null, 2) + '\n');
   else if (values.md) process.stdout.write(renderMarkdown(report, { top }));
   else {
-    const color = process.stdout.isTTY && !process.env.NO_COLOR && process.env.TERM !== 'dumb';
+    const color = useColor(process.env, Boolean(process.stdout.isTTY));
     process.stdout.write(
-      renderTerminal(report, { color: Boolean(color) || Boolean(process.env.FORCE_COLOR), top, width: process.stdout.columns, htmlPath }) +
+      renderTerminal(report, { color, top, width: process.stdout.columns, htmlPath }) +
         '\n',
     );
   }
@@ -126,6 +126,13 @@ function main(argv: string[]): number {
 }
 
 class UsageError extends Error {}
+
+/** NO_COLOR (no-color.org) always wins; FORCE_COLOR=0/false turns colour off, any other value on. */
+function useColor(env: NodeJS.ProcessEnv, isTTY: boolean): boolean {
+  if (env.NO_COLOR) return false;
+  if (env.FORCE_COLOR !== undefined) return env.FORCE_COLOR !== '0' && env.FORCE_COLOR !== 'false';
+  return isTTY && env.TERM !== 'dumb';
+}
 
 try {
   process.exitCode = main(process.argv.slice(2));
