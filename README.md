@@ -61,7 +61,7 @@ npx repoheat
 
 Then open `repoheat.html` (or add `--open`) to explore the map.
 
-Prefer a global install? `npm i -g repoheat`, then run `repoheat` anywhere. Requires Node 18.3+ and git.
+Prefer a global install? `npm i -g repoheat`, then run `repoheat` anywhere. You can also run the latest code straight from GitHub with `npx github:ebxc-7s13/repoheat`. Requires Node 18.3+ and git.
 
 ## What you get
 
