@@ -1,0 +1,57 @@
+{
+  "name": "repoheat",
+  "version": "0.1.0",
+  "description": "Find the files that cause most of your bugs. One command, any language, nothing leaves your machine.",
+  "keywords": [
+    "git",
+    "hotspots",
+    "code-quality",
+    "technical-debt",
+    "churn",
+    "complexity",
+    "treemap",
+    "heatmap",
+    "refactoring",
+    "bus-factor",
+    "code-analysis",
+    "cli"
+  ],
+  "homepage": "https://github.com/ebxc-7s13/repoheat#readme",
+  "bugs": "https://github.com/ebxc-7s13/repoheat/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ebxc-7s13/repoheat.git"
+  },
+  "license": "MIT",
+  "author": "ebxc-7s13",
+  "type": "module",
+  "bin": {
+    "repoheat": "dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "assets"
+  ],
+  "engines": {
+    "node": ">=18.3"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "test": "npm run build && node --test test/unit.test.js test/cli.test.js",
+    "start": "node dist/cli.js",
+    "prepublishOnly": "npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0"
+  }
+}

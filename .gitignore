@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+*.log
+repoheat.html
+repoheat-report.html
+.DS_Store
+LAUNCH.md
+.claude/

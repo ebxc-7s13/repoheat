@@ -1,0 +1,57 @@
+name: repoheat
+description: Find the hotspots in your codebase (complex files that change often) and post them to the job summary.
+author: ebxc-7s13
+branding:
+  icon: thermometer
+  color: orange
+
+inputs:
+  path:
+    description: Folder to analyse (defaults to the repository root).
+    default: .
+  since:
+    description: Time window, e.g. "6 months ago". Empty uses the repoheat default.
+    default: ''
+  top:
+    description: Number of hotspots to list.
+    default: '10'
+  args:
+    description: Extra command-line flags, e.g. '--exclude "**/generated/**" --anonymize'.
+    default: ''
+  version:
+    description: repoheat version to run.
+    default: latest
+  upload-report:
+    description: Upload the interactive HTML heatmap as a workflow artifact.
+    default: 'true'
+
+outputs:
+  report:
+    description: Path to the generated HTML heatmap.
+    value: ${{ steps.run.outputs.report }}
+
+runs:
+  using: composite
+  steps:
+    - id: run
+      shell: bash
+      env:
+        RH_PATH: ${{ inputs.path }}
+        RH_SINCE: ${{ inputs.since }}
+        RH_TOP: ${{ inputs.top }}
+        RH_ARGS: ${{ inputs.args }}
+        RH_VERSION: ${{ inputs.version }}
+      run: |
+        if [ "$(git -C "$RH_PATH" rev-parse --is-shallow-repository)" = "true" ]; then
+          echo "::warning title=repoheat::Shallow clone detected. Use actions/checkout with fetch-depth: 0 to analyse the full history."
+        fi
+        set -- "$RH_PATH" --top "$RH_TOP"
+        [ -n "$RH_SINCE" ] && set -- "$@" --since "$RH_SINCE"
+        report="$RUNNER_TEMP/repoheat.html"
+        eval "npx --yes repoheat@$RH_VERSION \"\$@\" $RH_ARGS --md --out \"$report\"" >> "$GITHUB_STEP_SUMMARY"
+        echo "report=$report" >> "$GITHUB_OUTPUT"
+    - if: inputs.upload-report == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: repoheat-report
+        path: ${{ steps.run.outputs.report }}

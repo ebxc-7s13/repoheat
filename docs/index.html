@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>repoheat · find the files that cause most of your bugs</title>
+<meta name="description" content="One command shows the hotspots in any git repo: complex files that keep changing. Interactive heatmap, any language, fully offline.">
+<meta property="og:title" content="repoheat: find the files that cause most of your bugs">
+<meta property="og:description" content="npx repoheat. One command, any language, nothing leaves your machine.">
+<meta property="og:image" content="https://ebxc-7s13.github.io/repoheat/assets/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/logo.svg">
+<style>
+:root { --bg:#0b0f17; --panel:#121826; --line:#263043; --text:#e6eaf2; --muted:#8b95a8; --accent:#f97316; color-scheme: dark; }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --bg:#f6f7fb; --panel:#fff; --line:#e1e5ee; --text:#151a25; --muted:#5f6b80; --accent:#ea580c; color-scheme: light; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--accent); }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+nav { display:flex; align-items:center; gap:10px; padding:20px 0; font-weight:700; }
+nav img { width:28px; height:28px; }
+nav .sp { flex:1; }
+nav a.gh { color:var(--text); text-decoration:none; font-weight:600; border:1px solid var(--line); padding:6px 12px; border-radius:9px; background:var(--panel); }
+.hero { text-align:center; padding:56px 0 30px; }
+h1 { font-size: clamp(34px, 6vw, 60px); line-height:1.05; letter-spacing:-.03em; margin:0 0 16px; }
+h1 em { font-style:normal; color:var(--accent); }
+.sub { color:var(--muted); font-size: clamp(17px, 2.4vw, 21px); margin:0 auto 28px; max-width: 640px; }
+.cmd { display:inline-flex; align-items:center; gap:12px; font:600 20px ui-monospace, "Cascadia Code", Menlo, Consolas, monospace; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px 12px 20px; }
+.cmd span { color: var(--accent); }
+.cmd button { font:600 13px ui-sans-serif, system-ui, sans-serif; border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:8px; padding:6px 10px; cursor:pointer; }
+.cta { margin-top: 22px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.btn { text-decoration:none; padding:10px 18px; border-radius:10px; font-weight:650; border:1px solid var(--line); color:var(--text); background:var(--panel); }
+.btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+.shot { display:block; margin: 40px auto 0; max-width:100%; border-radius:14px; border:1px solid var(--line); box-shadow: 0 30px 80px rgba(0,0,0,.35); }
+.grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; margin: 64px 0; }
+.card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px; }
+.card h3 { margin:0 0 6px; font-size:17px; }
+.card p { margin:0; color:var(--muted); font-size:15px; }
+footer { color:var(--muted); font-size:14px; text-align:center; padding: 20px 0 50px; }
+@media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><img src="assets/logo.svg" alt="">repoheat<span class="sp"></span><a class="gh" href="https://github.com/ebxc-7s13/repoheat">★ Star on GitHub</a></nav>
+  <section class="hero">
+    <h1>Find the files that cause <em>most of your bugs</em>.</h1>
+    <p class="sub">repoheat reads your git history and shows the hotspots: complex code that keeps changing. Any language, one command, nothing leaves your machine.</p>
+    <div class="cmd"><div><span>$</span> npx repoheat</div><button id="copy" type="button">Copy</button></div>
+    <div class="cta">
+      <a class="btn primary" href="demo.html">Explore the live demo →</a>
+      <a class="btn" href="https://github.com/ebxc-7s13/repoheat#readme">Read the docs</a>
+    </div>
+    <a href="demo.html"><img class="shot" src="assets/screenshot.png" width="1440" height="1000" alt="repoheat heatmap of the Vite repository"></a>
+  </section>
+  <section class="grid">
+    <div class="card"><h3>🔥 Hotspots</h3><p>Files ranked by churn × complexity. The short list of places where refactoring pays off.</p></div>
+    <div class="card"><h3>🗺️ Interactive heatmap</h3><p>A zoomable treemap of your repo in a single offline HTML file. Export a PNG in one click.</p></div>
+    <div class="card"><h3>🐛 Bug magnets</h3><p>See which files keep attracting fix commits, so you know where tests are missing.</p></div>
+    <div class="card"><h3>🚌 Bus factor</h3><p>Spot hot files that only one person understands, before they go on holiday.</p></div>
+    <div class="card"><h3>⇄ Hidden coupling</h3><p>Files that always change together, even though nothing in the code says so.</p></div>
+    <div class="card"><h3>🤖 Agent-ready</h3><p><code>--md</code> produces a summary for AGENTS.md or CLAUDE.md, so AI agents tread carefully in hot files.</p></div>
+  </section>
+  <footer>MIT licensed · Zero dependencies · <a href="https://github.com/ebxc-7s13/repoheat">GitHub</a> · <a href="https://www.npmjs.com/package/repoheat">npm</a></footer>
+</div>
+<script>
+document.getElementById('copy').onclick = async (e) => {
+  try { await navigator.clipboard.writeText('npx repoheat'); e.target.textContent = 'Copied!'; } catch (err) { e.target.textContent = 'Select & copy'; }
+  setTimeout(() => (e.target.textContent = 'Copy'), 1500);
+};
+</script>
+</body>
+</html>

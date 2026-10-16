@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="repoheat">
+<title>vite · repoheat</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ea580c'/%3E%3Crect x='6' y='6' width='12' height='20' rx='2' fill='%23fff' opacity='.95'/%3E%3Crect x='20' y='6' width='6' height='9' rx='2' fill='%23fff' opacity='.7'/%3E%3Crect x='20' y='17' width='6' height='9' rx='2' fill='%23fff' opacity='.45'/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #0b0f17; --panel: #121826; --panel-2: #182032; --line: #263043; --text: #e6eaf2; --muted: #8b95a8;
+  --accent: #f97316; --cool: #1c2638; --cool-2: #2b3b57; --focus: #ffffff; --shadow: 0 10px 30px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --bg: #f6f7fb; --panel: #ffffff; --panel-2: #f1f3f8; --line: #e1e5ee; --text: #151a25; --muted: #5f6b80;
+  --accent: #ea580c; --cool: #e7ebf3; --cool-2: #c9d3e4; --focus: #111827; --shadow: 0 10px 30px rgba(20,30,60,.12);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); }
+body { font: 14px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+code, .mono { font-family: ui-monospace, SFMono-Regular, "Cascadia Code", Menlo, Consolas, monospace; }
+button { font: inherit; color: inherit; }
+a { color: var(--accent); }
+.wrap { max-width: 1440px; margin: 0 auto; padding: 20px 24px 40px; }
+header.top { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.logo { display: flex; align-items: center; gap: 9px; font-weight: 700; letter-spacing: -.01em; text-decoration: none; color: var(--text); }
+.logo svg { width: 26px; height: 26px; }
+.repo { font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+.meta { color: var(--muted); font-size: 13px; }
+.spacer { flex: 1; }
+.btn { border: 1px solid var(--line); background: var(--panel); border-radius: 9px; padding: 7px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.btn.primary:hover { filter: brightness(1.08); }
+.stats { display: grid; grid-template-columns: minmax(0, 2.2fr) repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.stat .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+.stat .v { font-size: 26px; font-weight: 750; letter-spacing: -.02em; margin-top: 2px; }
+.stat .s { color: var(--muted); font-size: 12.5px; }
+.stat.hero .v { font-size: 22px; line-height: 1.25; }
+.stat.hero .v em { font-style: normal; color: var(--accent); }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 12px; }
+.mapcard { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+.toolbar { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.seg { display: inline-flex; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 3px; flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; padding: 5px 10px; border-radius: 7px; cursor: pointer; color: var(--muted); font-size: 13px; }
+.seg button[aria-pressed="true"] { background: var(--panel); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.25); font-weight: 600; }
+.crumbs { display: flex; gap: 4px; align-items: center; font-size: 13px; color: var(--muted); min-width: 0; overflow: hidden; white-space: nowrap; }
+.crumbs button { border: 0; background: none; padding: 2px 4px; border-radius: 5px; cursor: pointer; color: var(--muted); }
+.crumbs button:hover { background: var(--panel-2); color: var(--text); }
+.crumbs button:last-child { color: var(--text); font-weight: 600; }
+.legend { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-left: auto; }
+.legend .ramp { width: 120px; height: 8px; border-radius: 4px; }
+#mapbox { position: relative; flex: 1; min-height: 560px; }
+#map { position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; display: block; }
+.side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.side .card { padding: 0; overflow: hidden; }
+.side h2, .below h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0; padding: 12px 14px 8px; font-weight: 650; }
+.search { margin: 0 12px 8px; display: block; width: calc(100% - 24px); padding: 7px 10px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel-2); color: var(--text); font: inherit; }
+.list { list-style: none; margin: 0; padding: 0 6px 8px; max-height: 470px; overflow: auto; }
+.list li { display: grid; grid-template-columns: 22px minmax(0, 1fr) 44px; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 8px; cursor: pointer; }
+.list li:hover, .list li.sel { background: var(--panel-2); }
+.list .rank { color: var(--muted); font-size: 12px; text-align: right; }
+.list .p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; direction: rtl; text-align: left; }
+.list .p span { direction: ltr; unicode-bidi: bidi-override; }
+.list .p .d { color: var(--muted); }
+.list .val { text-align: right; font-weight: 650; font-variant-numeric: tabular-nums; font-size: 13px; }
+.list .bar { grid-column: 2 / 4; height: 3px; border-radius: 2px; background: var(--panel-2); overflow: hidden; margin-top: -2px; }
+.list .bar i { display: block; height: 100%; }
+.details { padding: 4px 14px 14px; }
+.details .path { font-size: 13px; word-break: break-all; margin-bottom: 10px; }
+.kv { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.kv div { background: var(--panel-2); border-radius: 9px; padding: 8px 10px; }
+.kv b { display: block; font-size: 17px; font-variant-numeric: tabular-nums; }
+.kv span { color: var(--muted); font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; }
+.empty { color: var(--muted); padding: 4px 14px 14px; font-size: 13px; }
+.below { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.rows { list-style: none; margin: 0; padding: 0 14px 12px; }
+.rows li { padding: 8px 0; border-top: 1px solid var(--line); font-size: 13px; display: flex; gap: 10px; align-items: baseline; }
+.rows li:first-child { border-top: 0; }
+.rows .grow { flex: 1; min-width: 0; word-break: break-all; }
+.rows .tag { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pill { display: inline-block; padding: 1px 7px; border-radius: 99px; background: var(--panel-2); color: var(--muted); font-size: 11.5px; margin-left: 4px; }
+#tip { position: fixed; pointer-events: none; z-index: 10; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; box-shadow: var(--shadow); font-size: 12.5px; max-width: 360px; display: none; }
+#tip .t { font-weight: 650; word-break: break-all; margin-bottom: 4px; }
+#tip .g { display: grid; grid-template-columns: auto auto; gap: 1px 14px; color: var(--muted); }
+#tip .g b { color: var(--text); font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+footer { margin-top: 22px; color: var(--muted); font-size: 12.5px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: space-between; }
+footer code { background: var(--panel); border: 1px solid var(--line); padding: 2px 6px; border-radius: 6px; color: var(--text); }
+.help { color: var(--muted); font-size: 12.5px; padding: 0 14px 12px; }
+@media (max-width: 1100px) {
+  .main { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat.hero { grid-column: 1 / -1; }
+  .below { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .wrap { padding: 14px 16px 32px; }
+  #mapbox { min-height: 420px; }
+  .legend { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="https://github.com/ebxc-7s13/repoheat" target="_blank" rel="noopener">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#ea580c"/><rect x="6" y="6" width="12" height="20" rx="2" fill="#fff" opacity=".95"/><rect x="20" y="6" width="6" height="9" rx="2" fill="#fff" opacity=".7"/><rect x="20" y="17" width="6" height="9" rx="2" fill="#fff" opacity=".45"/></svg>
+      repoheat
+    </a>
+    <div>
+      <div class="repo" id="repo"></div>
+      <div class="meta" id="meta"></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" id="theme" title="Toggle light/dark">◐ Theme</button>
+    <button class="btn primary" id="png" title="Download a shareable image of this heatmap">⤓ Share image</button>
+  </header>
+
+  <section class="stats" id="stats"></section>
+
+  <section class="main">
+    <div class="card mapcard">
+      <div class="toolbar">
+        <div class="seg" id="metrics" role="group" aria-label="Colour by"></div>
+        <nav class="crumbs" id="crumbs" aria-label="Folder"></nav>
+        <div class="legend"><span>cool</span><span class="ramp" id="ramp"></span><span>hot</span></div>
+      </div>
+      <div id="mapbox"><canvas id="map" role="img" aria-label="Treemap of files: size is lines of code, colour is the selected metric"></canvas></div>
+    </div>
+    <aside class="side">
+      <div class="card">
+        <h2 id="listTitle">Top hotspots</h2>
+        <input class="search" id="search" type="search" placeholder="Filter files…" aria-label="Filter files">
+        <ol class="list" id="list"></ol>
+      </div>
+      <div class="card">
+        <h2>Selected file</h2>
+        <div id="details"><div class="empty">Click a file in the map or the list.</div></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="below">
+    <div class="card">
+      <h2>Hidden coupling</h2>
+      <div class="help">Files that keep changing in the same commits. A change in one usually needs a change in the other.</div>
+      <ul class="rows" id="coupling"></ul>
+    </div>
+    <div class="card">
+      <h2>Knowledge risk</h2>
+      <div class="help">Hot files where one person made most of the changes. If they leave, the knowledge goes with them.</div>
+      <ul class="rows" id="risk"></ul>
+    </div>
+  </section>
+
+  <footer>
+    <span>Size = lines of code · Colour = selected metric · Click a folder label or double-click a file to zoom in, Esc to zoom out.</span>
+    <span id="gen"></span>
+  </footer>
+</div>
+<div id="tip" role="tooltip"></div>
+
+<script>
+const DATA = {"tool":{"name":"repoheat","version":"0.1.0"},"generatedAt":"2026-10-16T03:33:35.943Z","repo":{"name":"vite","branch":"main","head":"928e721b3","scope":"","since":"12 months ago","firstCommit":1760676131,"lastCommit":1792064721},"totals":{"files":302,"loc":59031,"commits":600,"authors":168,"bugfixCommits":309},"busFactor":null,"concentration":{"changeShare":0.5,"files":26,"locShare":0.4514577086615507},"files":[{"path":"packages/vite/src/node/plugins/css.ts","language":"TypeScript","loc":3384,"complexity":11270,"commits":55,"added":825,"deleted":572,"bugfixes":32,"authors":28,"topAuthor":"dev-1","topAuthorShare":0.36363636363636365,"lastChanged":1792061389,"score":95},{"path":"packages/vite/src/node/config.ts","language":"TypeScript","loc":2712,"complexity":5193,"commits":68,"added":832,"deleted":512,"bugfixes":26,"authors":21,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1792061333,"score":92},{"path":"packages/vite/src/node/build.ts","language":"TypeScript","loc":1854,"complexity":3725,"commits":53,"added":392,"deleted":242,"bugfixes":23,"authors":18,"topAuthor":"dev-1","topAuthorShare":0.5094339622641509,"lastChanged":1792061333,"score":83},{"path":"packages/vite/src/node/utils.ts","language":"TypeScript","loc":1814,"complexity":2699,"commits":44,"added":456,"deleted":202,"bugfixes":24,"authors":23,"topAuthor":"dev-1","topAuthorShare":0.29545454545454547,"lastChanged":1792061333,"score":76},{"path":"packages/vite/src/node/server/index.ts","language":"TypeScript","loc":1388,"complexity":2637,"commits":39,"added":447,"deleted":214,"bugfixes":18,"authors":19,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1792060229,"score":74},{"path":"packages/create-vite/src/index.ts","language":"TypeScript","loc":1089,"complexity":2568,"commits":39,"added":442,"deleted":196,"bugfixes":15,"authors":24,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1792060229,"score":73},{"path":"packages/vite/src/node/plugins/html.ts","language":"TypeScript","loc":1608,"complexity":5531,"commits":26,"added":335,"deleted":143,"bugfixes":16,"authors":11,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1792061389,"score":72},{"path":"packages/vite/src/node/optimizer/index.ts","language":"TypeScript","loc":1393,"complexity":2774,"commits":28,"added":166,"deleted":90,"bugfixes":13,"authors":20,"topAuthor":"dev-1","topAuthorShare":0.25,"lastChanged":1792060537,"score":68},{"path":"docs/.vitepress/config.ts","language":"TypeScript","loc":557,"complexity":2405,"commits":29,"added":232,"deleted":182,"bugfixes":0,"authors":9,"topAuthor":"dev-3","topAuthorShare":0.3448275862068966,"lastChanged":1790252261,"score":67},{"path":"packages/vite/src/node/plugins/importAnalysisBuild.ts","language":"TypeScript","loc":644,"complexity":3193,"commits":20,"added":332,"deleted":404,"bugfixes":9,"authors":10,"topAuthor":"dev-1","topAuthorShare":0.45,"lastChanged":1792061389,"score":62},{"path":"packages/vite/src/node/plugins/importAnalysis.ts","language":"TypeScript","loc":1071,"complexity":4233,"commits":18,"added":135,"deleted":97,"bugfixes":10,"authors":6,"topAuthor":"dev-1","topAuthorShare":0.7222222222222222,"lastChanged":1791258243,"score":62},{"path":"packages/vite/src/node/plugins/worker.ts","language":"TypeScript","loc":803,"complexity":2474,"commits":20,"added":646,"deleted":332,"bugfixes":7,"authors":9,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1787380614,"score":60},{"path":"packages/vite/src/node/plugins/resolve.ts","language":"TypeScript","loc":1098,"complexity":3027,"commits":18,"added":152,"deleted":560,"bugfixes":10,"authors":6,"topAuthor":"dev-1","topAuthorShare":0.7222222222222222,"lastChanged":1788757823,"score":60},{"path":"packages/vite/src/node/plugins/asset.ts","language":"TypeScript","loc":773,"complexity":1841,"commits":21,"added":390,"deleted":114,"bugfixes":9,"authors":9,"topAuthor":"dev-1","topAuthorShare":0.5714285714285714,"lastChanged":1791531054,"score":59},{"path":"packages/plugin-legacy/src/index.ts","language":"TypeScript","loc":1091,"complexity":3340,"commits":16,"added":212,"deleted":68,"bugfixes":8,"authors":7,"topAuthor":"dev-1","topAuthorShare":0.5625,"lastChanged":1787380614,"score":58},{"path":"packages/vite/src/node/optimizer/scan.ts","language":"TypeScript","loc":734,"complexity":2020,"commits":18,"added":124,"deleted":88,"bugfixes":11,"authors":9,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1791949786,"score":57},{"path":"packages/vite/src/node/server/bundledDev.ts","language":"TypeScript","loc":540,"complexity":1373,"commits":19,"added":731,"deleted":92,"bugfixes":11,"authors":6,"topAuthor":"dev-4","topAuthorShare":0.42105263157894735,"lastChanged":1791533417,"score":55},{"path":"packages/vite/src/node/plugins/importMetaGlob.ts","language":"TypeScript","loc":643,"complexity":1985,"commits":16,"added":64,"deleted":54,"bugfixes":5,"authors":6,"topAuthor":"dev-1","topAuthorShare":0.3125,"lastChanged":1788757823,"score":54},{"path":"packages/vite/src/node/server/hmr.ts","language":"TypeScript","loc":1107,"complexity":2812,"commits":13,"added":119,"deleted":67,"bugfixes":2,"authors":5,"topAuthor":"dev-1","topAuthorShare":0.5384615384615384,"lastChanged":1788757823,"score":53},{"path":"packages/vite/src/node/server/pluginContainer.ts","language":"TypeScript","loc":1210,"complexity":2908,"commits":12,"added":77,"deleted":60,"bugfixes":3,"authors":7,"topAuthor":"dev-1","topAuthorShare":0.4166666666666667,"lastChanged":1792061333,"score":52},{"path":"packages/vite/src/node/plugins/oxc.ts","language":"TypeScript","loc":389,"complexity":848,"commits":19,"added":225,"deleted":501,"bugfixes":6,"authors":4,"topAuthor":"dev-1","topAuthorShare":0.6842105263157895,"lastChanged":1791441818,"score":51},{"path":"packages/vite/rolldown.config.ts","language":"TypeScript","loc":382,"complexity":1110,"commits":17,"added":43,"deleted":57,"bugfixes":3,"authors":8,"topAuthor":"dev-2","topAuthorShare":0.23529411764705882,"lastChanged":1790323725,"score":51},{"path":"packages/vite/src/node/server/middlewares/indexHtml.ts","language":"TypeScript","loc":583,"complexity":1422,"commits":14,"added":168,"deleted":42,"bugfixes":7,"authors":9,"topAuthor":"dev-1","topAuthorShare":0.42857142857142855,"lastChanged":1791444711,"score":50},{"path":"packages/vite/src/node/optimizer/rolldownDepPlugin.ts","language":"TypeScript","loc":425,"complexity":1516,"commits":13,"added":155,"deleted":62,"bugfixes":6,"authors":7,"topAuthor":"dev-1","topAuthorShare":0.38461538461538464,"lastChanged":1790741640,"score":49},{"path":"packages/vite/src/node/ssr/ssrTransform.ts","language":"TypeScript","loc":728,"complexity":1885,"commits":11,"added":186,"deleted":168,"bugfixes":7,"authors":7,"topAuthor":"dev-1","topAuthorShare":0.45454545454545453,"lastChanged":1790844876,"score":47},{"path":"packages/vite/src/node/plugins/index.ts","language":"TypeScript","loc":264,"complexity":514,"commits":17,"added":137,"deleted":119,"bugfixes":3,"authors":9,"topAuthor":"dev-1","topAuthorShare":0.4117647058823529,"lastChanged":1791360985,"score":46},{"path":"packages/vite/src/node/plugins/wasm.ts","language":"TypeScript","loc":378,"complexity":724,"commits":14,"added":509,"deleted":198,"bugfixes":1,"authors":6,"topAuthor":"dev-1","topAuthorShare":0.35714285714285715,"lastChanged":1787380614,"score":45},{"path":"packages/vite/src/node/server/environment.ts","language":"TypeScript","loc":434,"complexity":948,"commits":12,"added":177,"deleted":83,"bugfixes":6,"authors":5,"topAuthor":"dev-1","topAuthorShare":0.5833333333333334,"lastChanged":1787380614,"score":45},{"path":"packages/vite/src/node/cli.ts","language":"TypeScript","loc":462,"complexity":1248,"commits":11,"added":128,"deleted":96,"bugfixes":0,"authors":8,"topAuthor":"dev-1","topAuthorShare":0.2727272727272727,"lastChanged":1788757823,"score":45},{"path":"packages/vite/src/node/plugins/workerImportMetaUrl.ts","language":"TypeScript","loc":272,"complexity":796,"commits":12,"added":76,"deleted":53,"bugfixes":3,"authors":7,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1787380614,"score":43},{"path":"packages/vite/src/client/client.ts","language":"TypeScript","loc":579,"complexity":1551,"commits":9,"added":125,"deleted":39,"bugfixes":1,"authors":5,"topAuthor":"dev-1","topAuthorShare":0.4444444444444444,"lastChanged":1791454546,"score":43},{"path":"packages/vite/rolldown.dts.config.ts","language":"TypeScript","loc":450,"complexity":897,"commits":10,"added":71,"deleted":40,"bugfixes":1,"authors":5,"topAuthor":"dev-1","topAuthorShare":0.3,"lastChanged":1788757823,"score":41},{"path":"packages/vite/src/node/optimizer/optimizer.ts","language":"TypeScript","loc":705,"complexity":2431,"commits":7,"added":63,"deleted":53,"bugfixes":2,"authors":4,"topAuthor":"dev-1","topAuthorShare":0.5714285714285714,"lastChanged":1790240645,"score":41},{"path":"packages/vite/src/node/plugins/dynamicImportVars.ts","language":"TypeScript","loc":282,"complexity":717,"commits":10,"added":58,"deleted":42,"bugfixes":1,"authors":4,"topAuthor":"dev-1","topAuthorShare":0.4,"lastChanged":1787380614,"score":40},{"path":"packages/vite/src/node/plugins/define.ts","language":"TypeScript","loc":197,"complexity":474,"commits":11,"added":64,"deleted":102,"bugfixes":3,"authors":7,"topAuthor":"dev-1","topAuthorShare":0.2727272727272727,"lastChanged":1791881451,"score":39},{"path":"packages/vite/src/node/plugins/clientInjections.ts","language":"TypeScript","loc":234,"complexity":434,"commits":11,"added":223,"deleted":88,"bugfixes":4,"authors":6,"topAuthor":"dev-4","topAuthorShare":0.36363636363636365,"lastChanged":1791456412,"score":38},{"path":"packages/vite/src/node/http.ts","language":"TypeScript","loc":333,"complexity":562,"commits":10,"added":202,"deleted":71,"bugfixes":6,"authors":7,"topAuthor":"dev-1","topAuthorShare":0.3,"lastChanged":1787380614,"score":38},{"path":"packages/vite/src/node/plugins/manifest.ts","language":"TypeScript","loc":181,"complexity":672,"commits":9,"added":192,"deleted":303,"bugfixes":2,"authors":5,"topAuthor":"dev-1","topAuthorShare":0.4444444444444444,"lastChanged":1787380614,"score":38},{"path":"packages/vite/src/module-runner/runner.ts","language":"TypeScript","loc":393,"complexity":984,"commits":8,"added":93,"deleted":65,"bugfixes":3,"authors":7,"topAuthor":"dev-1","topAuthorShare":0.25,"lastChanged":1788757823,"score":38},{"path":"packages/vite/src/node/plugins/esbuild.ts","language":"TypeScript","loc":459,"complexity":889,"commits":8,"added":36,"deleted":118,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.625,"lastChanged":1788318234,"score":38},{"path":"packages/vite/src/node/server/ws.ts","language":"TypeScript","loc":440,"complexity":1087,"commits":7,"added":44,"deleted":24,"bugfixes":1,"authors":4,"topAuthor":"dev-1","topAuthorShare":0.5714285714285714,"lastChanged":1791966497,"score":37},{"path":"vitest.config.e2e.ts","language":"TypeScript","loc":69,"complexity":138,"commits":17,"added":65,"deleted":37,"bugfixes":1,"authors":3,"topAuthor":"dev-4","topAuthorShare":0.7647058823529411,"lastChanged":1791533418,"score":36},{"path":"packages/vite/src/module-runner/sourcemap/interceptor.ts","language":"TypeScript","loc":385,"complexity":633,"commits":8,"added":28,"deleted":28,"bugfixes":5,"authors":7,"topAuthor":"dev-1","topAuthorShare":0.25,"lastChanged":1791428596,"score":36},{"path":"packages/vite/src/node/index.ts","language":"TypeScript","loc":282,"complexity":163,"commits":14,"added":53,"deleted":25,"bugfixes":0,"authors":8,"topAuthor":"dev-1","topAuthorShare":0.42857142857142855,"lastChanged":1788758945,"score":35},{"path":"packages/vite/src/node/server/middlewares/static.ts","language":"TypeScript","loc":372,"complexity":633,"commits":7,"added":76,"deleted":26,"bugfixes":4,"authors":5,"topAuthor":"dev-1","topAuthorShare":0.42857142857142855,"lastChanged":1791456901,"score":34},{"path":"packages/vite/src/node/server/transformRequest.ts","language":"TypeScript","loc":506,"complexity":941,"commits":6,"added":32,"deleted":26,"bugfixes":3,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.8333333333333334,"lastChanged":1787380614,"score":34},{"path":"packages/vite/src/node/preview.ts","language":"TypeScript","loc":293,"complexity":401,"commits":7,"added":56,"deleted":31,"bugfixes":3,"authors":6,"topAuthor":"dev-19","topAuthorShare":0.2857142857142857,"lastChanged":1787380614,"score":32},{"path":"packages/vite/src/node/nativeConfigCompat.ts","language":"TypeScript","loc":306,"complexity":696,"commits":6,"added":349,"deleted":13,"bugfixes":1,"authors":2,"topAuthor":"dev-2","topAuthorShare":0.6666666666666666,"lastChanged":1788234519,"score":32},{"path":"packages/vite/src/node/plugin.ts","language":"TypeScript","loc":440,"complexity":617,"commits":6,"added":59,"deleted":21,"bugfixes":2,"authors":4,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1788238500,"score":32},{"path":"packages/vite/src/node/server/middlewares/transform.ts","language":"TypeScript","loc":364,"complexity":1226,"commits":5,"added":45,"deleted":29,"bugfixes":4,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1791257454,"score":32},{"path":"packages/vite/src/node/plugins/prepareOutDir.ts","language":"TypeScript","loc":104,"complexity":315,"commits":7,"added":20,"deleted":14,"bugfixes":3,"authors":4,"topAuthor":"dev-1","topAuthorShare":0.5714285714285714,"lastChanged":1787380614,"score":30},{"path":"packages/vite/src/node/plugins/assetImportMetaUrl.ts","language":"TypeScript","loc":196,"complexity":777,"commits":5,"added":22,"deleted":19,"bugfixes":1,"authors":4,"topAuthor":"dev-1","topAuthorShare":0.4,"lastChanged":1787380614,"score":30},{"path":"packages/vite/rollupLicensePlugin.ts","language":"TypeScript","loc":183,"complexity":537,"commits":5,"added":29,"deleted":6,"bugfixes":1,"authors":4,"topAuthor":"dev-3","topAuthorShare":0.4,"lastChanged":1788757823,"score":29},{"path":"packages/vite/src/client/bundledDevHmrClient.ts","language":"TypeScript","loc":441,"complexity":1116,"commits":4,"added":209,"deleted":52,"bugfixes":1,"authors":2,"topAuthor":"dev-4","topAuthorShare":0.75,"lastChanged":1791456412,"score":29},{"path":"packages/vite/src/node/constants.ts","language":"TypeScript","loc":200,"complexity":112,"commits":9,"added":52,"deleted":34,"bugfixes":3,"authors":6,"topAuthor":"dev-4","topAuthorShare":0.2222222222222222,"lastChanged":1790323725,"score":28},{"path":"packages/vite/src/node/env.ts","language":"TypeScript","loc":110,"complexity":142,"commits":8,"added":30,"deleted":7,"bugfixes":2,"authors":6,"topAuthor":"dev-18","topAuthorShare":0.25,"lastChanged":1787380614,"score":28},{"path":"packages/vite/src/node/shortcuts.ts","language":"TypeScript","loc":174,"complexity":324,"commits":6,"added":69,"deleted":36,"bugfixes":3,"authors":3,"topAuthor":"dev-2","topAuthorShare":0.5,"lastChanged":1788765335,"score":28},{"path":"docs/_data/team.js","language":"JavaScript","loc":259,"complexity":519,"commits":5,"added":78,"deleted":38,"bugfixes":0,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.6,"lastChanged":1783565207,"score":28},{"path":"packages/vite/src/node/plugins/optimizedDeps.ts","language":"TypeScript","loc":144,"complexity":483,"commits":5,"added":39,"deleted":8,"bugfixes":2,"authors":4,"topAuthor":"dev-1","topAuthorShare":0.4,"lastChanged":1790237851,"score":28},{"path":"packages/vite/src/node/plugins/terser.ts","language":"TypeScript","loc":130,"complexity":425,"commits":5,"added":40,"deleted":37,"bugfixes":3,"authors":5,"topAuthor":"dev-58","topAuthorShare":0.2,"lastChanged":1790847252,"score":27},{"path":"docs/.vitepress/theme/live/VideoIframe.vue","language":"Vue","loc":264,"complexity":741,"commits":4,"added":315,"deleted":26,"bugfixes":0,"authors":2,"topAuthor":"dev-17","topAuthorShare":0.75,"lastChanged":1787380614,"score":27},{"path":"packages/vite/src/node/plugins/forwardConsole.ts","language":"TypeScript","loc":225,"complexity":643,"commits":4,"added":238,"deleted":3,"bugfixes":2,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1792041231,"score":26},{"path":"packages/vite/src/shared/hmr.ts","language":"TypeScript","loc":284,"complexity":620,"commits":4,"added":34,"deleted":24,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1791456412,"score":26},{"path":"packages/create-vite/template-lit/src/my-element.js","language":"JavaScript","loc":387,"complexity":1578,"commits":3,"added":378,"deleted":67,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":26},{"path":"packages/vite/src/node/server/sourcemap.ts","language":"TypeScript","loc":225,"complexity":457,"commits":4,"added":87,"deleted":17,"bugfixes":2,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1790244696,"score":25},{"path":"packages/create-vite/template-lit-ts/src/my-element.ts","language":"TypeScript","loc":384,"complexity":1296,"commits":3,"added":378,"deleted":67,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":25},{"path":"packages/vite/types/customEvent.d.ts","language":"TypeScript","loc":76,"complexity":104,"commits":7,"added":47,"deleted":9,"bugfixes":0,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.7142857142857143,"lastChanged":1788776539,"score":24},{"path":"packages/create-vite/template-vue-ts/src/components/HelloWorld.vue","language":"Vue","loc":90,"complexity":321,"commits":4,"added":89,"deleted":35,"bugfixes":2,"authors":4,"topAuthor":"dev-1","topAuthorShare":0.25,"lastChanged":1787380614,"score":24},{"path":"packages/vite/src/node/optimizer/pluginConverter.ts","language":"TypeScript","loc":302,"complexity":841,"commits":3,"added":18,"deleted":7,"bugfixes":2,"authors":3,"topAuthor":"dev-164","topAuthorShare":0.3333333333333333,"lastChanged":1778746187,"score":24},{"path":"packages/vite/src/shared/moduleRunnerTransport.ts","language":"TypeScript","loc":307,"complexity":1014,"commits":3,"added":12,"deleted":5,"bugfixes":1,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.6666666666666666,"lastChanged":1787380614,"score":24},{"path":"packages/vite/src/node/server/middlewares/memoryFiles.ts","language":"TypeScript","loc":48,"complexity":105,"commits":6,"added":62,"deleted":9,"bugfixes":3,"authors":4,"topAuthor":"dev-4","topAuthorShare":0.3333333333333333,"lastChanged":1791360985,"score":23},{"path":"packages/vite/src/node/plugins/license.ts","language":"TypeScript","loc":130,"complexity":296,"commits":4,"added":154,"deleted":3,"bugfixes":0,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1792061333,"score":23},{"path":"packages/create-vite/template-react-ts/src/App.tsx","language":"TypeScript","loc":116,"complexity":660,"commits":3,"added":108,"deleted":21,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":23},{"path":"packages/create-vite/template-react/src/App.jsx","language":"JavaScript","loc":116,"complexity":660,"commits":3,"added":108,"deleted":21,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":23},{"path":"packages/vite/src/node/server/middlewares/proxy.ts","language":"TypeScript","loc":229,"complexity":791,"commits":3,"added":29,"deleted":16,"bugfixes":1,"authors":3,"topAuthor":"dev-2","topAuthorShare":0.3333333333333333,"lastChanged":1789008765,"score":23},{"path":"docs/.vitepress/theme/components/SupportedVersions.vue","language":"Vue","loc":143,"complexity":216,"commits":4,"added":171,"deleted":12,"bugfixes":0,"authors":3,"topAuthor":"dev-3","topAuthorShare":0.5,"lastChanged":1789744864,"score":22},{"path":"packages/vite/src/node/ssr/fetchModule.ts","language":"TypeScript","loc":134,"complexity":201,"commits":4,"added":12,"deleted":11,"bugfixes":1,"authors":4,"topAuthor":"dev-71","topAuthorShare":0.25,"lastChanged":1790323270,"score":22},{"path":"packages/vite/src/node/watch.ts","language":"TypeScript","loc":163,"complexity":200,"commits":4,"added":70,"deleted":7,"bugfixes":2,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.75,"lastChanged":1790248779,"score":22},{"path":"docs/.vitepress/theme/landing/Community.vue","language":"Vue","loc":204,"complexity":566,"commits":3,"added":222,"deleted":4,"bugfixes":0,"authors":3,"topAuthor":"dev-3","topAuthorShare":0.3333333333333333,"lastChanged":1776756489,"score":22},{"path":"packages/create-vite/template-preact-ts/src/app.tsx","language":"TypeScript","loc":99,"complexity":520,"commits":3,"added":93,"deleted":32,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":22},{"path":"packages/create-vite/template-preact/src/app.jsx","language":"JavaScript","loc":99,"complexity":520,"commits":3,"added":93,"deleted":32,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":22},{"path":"packages/create-vite/template-qwik-ts/src/app.tsx","language":"TypeScript","loc":95,"complexity":501,"commits":3,"added":90,"deleted":18,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":22},{"path":"packages/create-vite/template-qwik/src/app.jsx","language":"JavaScript","loc":95,"complexity":501,"commits":3,"added":90,"deleted":21,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":22},{"path":"packages/create-vite/template-solid-ts/src/App.tsx","language":"TypeScript","loc":100,"complexity":520,"commits":3,"added":93,"deleted":22,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":22},{"path":"packages/create-vite/template-solid/src/App.jsx","language":"JavaScript","loc":100,"complexity":520,"commits":3,"added":93,"deleted":22,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":22},{"path":"packages/vite/src/shared/forwardConsole.ts","language":"TypeScript","loc":200,"complexity":468,"commits":3,"added":277,"deleted":56,"bugfixes":2,"authors":2,"topAuthor":"dev-14","topAuthorShare":0.6666666666666666,"lastChanged":1790303141,"score":22},{"path":"packages/vite/src/node/plugins/modulePreloadPolyfill.ts","language":"TypeScript","loc":31,"complexity":68,"commits":6,"added":15,"deleted":100,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1787380614,"score":21},{"path":"packages/vite/src/client/bundledDevClient.ts","language":"TypeScript","loc":62,"complexity":93,"commits":5,"added":13,"deleted":12,"bugfixes":1,"authors":2,"topAuthor":"dev-4","topAuthorShare":0.8,"lastChanged":1791456412,"score":21},{"path":"docs/_data/acknowledgements.data.ts","language":"TypeScript","loc":288,"complexity":426,"commits":3,"added":321,"deleted":2,"bugfixes":0,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.6666666666666666,"lastChanged":1792061333,"score":21},{"path":"docs/.vitepress/theme/landing/FeatureGrid1.vue","language":"Vue","loc":101,"complexity":373,"commits":3,"added":108,"deleted":3,"bugfixes":1,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.6666666666666666,"lastChanged":1787380614,"score":21},{"path":"packages/vite/src/module-runner/hmrHandler.ts","language":"TypeScript","loc":122,"complexity":361,"commits":3,"added":4,"deleted":5,"bugfixes":1,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":21},{"path":"packages/vite/src/node/plugins/preAlias.ts","language":"TypeScript","loc":130,"complexity":351,"commits":3,"added":7,"deleted":4,"bugfixes":1,"authors":3,"topAuthor":"dev-2","topAuthorShare":0.3333333333333333,"lastChanged":1790146273,"score":21},{"path":"packages/vite/src/module-runner/importMetaResolver.ts","language":"TypeScript","loc":95,"complexity":119,"commits":4,"added":73,"deleted":11,"bugfixes":2,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.75,"lastChanged":1769675997,"score":20},{"path":"docs/.vitepress/theme/landing/Hero.vue","language":"Vue","loc":92,"complexity":306,"commits":3,"added":102,"deleted":6,"bugfixes":0,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":20},{"path":"packages/create-vite/template-vue/src/components/HelloWorld.vue","language":"Vue","loc":90,"complexity":321,"commits":3,"added":87,"deleted":35,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":20},{"path":"packages/vite/src/node/ssr/runtime/serverModuleRunner.ts","language":"TypeScript","loc":150,"complexity":268,"commits":3,"added":25,"deleted":2,"bugfixes":1,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.6666666666666666,"lastChanged":1787380614,"score":20},{"path":"packages/vite/src/node/server/mixedModuleGraph.ts","language":"TypeScript","loc":694,"complexity":1583,"commits":2,"added":2,"deleted":2,"bugfixes":0,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1787380614,"score":20},{"path":"packages/vite/src/shared/utils.ts","language":"TypeScript","loc":91,"complexity":66,"commits":5,"added":28,"deleted":6,"bugfixes":3,"authors":5,"topAuthor":"dev-71","topAuthorShare":0.2,"lastChanged":1790323270,"score":19},{"path":"packages/vite/src/node/idResolver.ts","language":"TypeScript","loc":112,"complexity":247,"commits":3,"added":21,"deleted":34,"bugfixes":1,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.6666666666666666,"lastChanged":1787380614,"score":19},{"path":"packages/vite/src/node/server/openBrowser.ts","language":"TypeScript","loc":137,"complexity":227,"commits":3,"added":12,"deleted":13,"bugfixes":0,"authors":3,"topAuthor":"dev-2","topAuthorShare":0.3333333333333333,"lastChanged":1790323520,"score":19},{"path":"packages/vite/src/node/ssr/ssrStacktrace.ts","language":"TypeScript","loc":102,"complexity":248,"commits":3,"added":29,"deleted":13,"bugfixes":2,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.6666666666666666,"lastChanged":1790323270,"score":19},{"path":"packages/vite/src/node/server/moduleGraph.ts","language":"TypeScript","loc":439,"complexity":897,"commits":2,"added":14,"deleted":14,"bugfixes":0,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1787380614,"score":19},{"path":"packages/vite/src/module-runner/utils.ts","language":"TypeScript","loc":60,"complexity":49,"commits":5,"added":28,"deleted":22,"bugfixes":2,"authors":4,"topAuthor":"dev-3","topAuthorShare":0.4,"lastChanged":1788757823,"score":18},{"path":"packages/vite/src/node/plugins/reporter.ts","language":"TypeScript","loc":25,"complexity":48,"commits":5,"added":21,"deleted":382,"bugfixes":1,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.6,"lastChanged":1787380614,"score":18},{"path":"docs/.vitepress/theme/components/AsideSponsors.vue","language":"Vue","loc":86,"complexity":79,"commits":4,"added":31,"deleted":34,"bugfixes":0,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1790252261,"score":18},{"path":"packages/vite/src/node/server/middlewares/triggerLazyBundling.ts","language":"TypeScript","loc":42,"complexity":85,"commits":4,"added":55,"deleted":9,"bugfixes":2,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1788422607,"score":18},{"path":"packages/vite/src/module-runner/evaluatedModules.ts","language":"TypeScript","loc":140,"complexity":170,"commits":3,"added":9,"deleted":8,"bugfixes":0,"authors":2,"topAuthor":"dev-3","topAuthorShare":0.6666666666666666,"lastChanged":1787380614,"score":18},{"path":"packages/vite/src/node/server/middlewares/htmlFallback.ts","language":"TypeScript","loc":79,"complexity":182,"commits":3,"added":23,"deleted":14,"bugfixes":0,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.6666666666666666,"lastChanged":1787380614,"score":18},{"path":"packages/vite/src/node/optimizer/resolve.ts","language":"TypeScript","loc":174,"complexity":614,"commits":2,"added":6,"deleted":3,"bugfixes":1,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1787380614,"score":18},{"path":"packages/vite/src/node/packages.ts","language":"TypeScript","loc":371,"complexity":582,"commits":2,"added":32,"deleted":12,"bugfixes":1,"authors":2,"topAuthor":"dev-2","topAuthorShare":0.5,"lastChanged":1788516790,"score":18},{"path":"packages/vite/src/client/overlay.ts","language":"TypeScript","loc":270,"complexity":417,"commits":2,"added":2,"deleted":1,"bugfixes":1,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1792061333,"score":17},{"path":"packages/vite/src/node/nodeResolve.ts","language":"TypeScript","loc":41,"complexity":53,"commits":4,"added":45,"deleted":2,"bugfixes":4,"authors":3,"topAuthor":"dev-8","topAuthorShare":0.5,"lastChanged":1761625830,"score":16},{"path":"docs/.vitepress/theme/composables/sponsor.ts","language":"TypeScript","loc":40,"complexity":89,"commits":3,"added":42,"deleted":134,"bugfixes":0,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":16},{"path":"packages/create-vite/template-vanilla-ts/src/main.ts","language":"TypeScript","loc":55,"complexity":99,"commits":3,"added":54,"deleted":18,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":16},{"path":"packages/create-vite/template-vanilla/src/main.js","language":"JavaScript","loc":55,"complexity":99,"commits":3,"added":54,"deleted":18,"bugfixes":1,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":16},{"path":"docs/.vitepress/theme/landing/FeatureGrid2.vue","language":"Vue","loc":83,"complexity":282,"commits":2,"added":88,"deleted":1,"bugfixes":0,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1787380614,"score":16},{"path":"docs/.vitepress/theme/live/Hero.vue","language":"Vue","loc":68,"complexity":278,"commits":2,"added":69,"deleted":1,"bugfixes":0,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1773199692,"score":16},{"path":"packages/vite/src/node/logger.ts","language":"TypeScript","loc":187,"complexity":353,"commits":2,"added":22,"deleted":4,"bugfixes":0,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1792061333,"score":16},{"path":"docs/.vitepress/theme/live/Layout.vue","language":"Vue","loc":31,"complexity":38,"commits":4,"added":40,"deleted":8,"bugfixes":0,"authors":2,"topAuthor":"dev-17","topAuthorShare":0.75,"lastChanged":1787380614,"score":15},{"path":"packages/vite/src/shared/invokeMethods.ts","language":"TypeScript","loc":84,"complexity":78,"commits":3,"added":19,"deleted":12,"bugfixes":1,"authors":3,"topAuthor":"dev-9","topAuthorShare":0.3333333333333333,"lastChanged":1775456585,"score":15},{"path":"packages/vite/types/hmrPayload.d.ts","language":"TypeScript","loc":87,"complexity":77,"commits":3,"added":16,"deleted":8,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1788776539,"score":15},{"path":"scripts/mergeChangelog.ts","language":"TypeScript","loc":191,"complexity":207,"commits":2,"added":221,"deleted":6,"bugfixes":0,"authors":2,"topAuthor":"dev-2","topAuthorShare":0.5,"lastChanged":1789006748,"score":15},{"path":"packages/vite/src/node/plugins/pluginFilter.ts","language":"TypeScript","loc":144,"complexity":173,"commits":2,"added":2,"deleted":2,"bugfixes":0,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1787380614,"score":14},{"path":"packages/vite/src/node/server/middlewares/base.ts","language":"TypeScript","loc":56,"complexity":131,"commits":2,"added":2,"deleted":2,"bugfixes":1,"authors":2,"topAuthor":"dev-2","topAuthorShare":0.5,"lastChanged":1791511945,"score":14},{"path":"packages/vite/src/node/ssr/ssrModuleLoader.ts","language":"TypeScript","loc":103,"complexity":173,"commits":2,"added":9,"deleted":3,"bugfixes":1,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":14},{"path":"packages/vite/src/types/chokidar.d.ts","language":"TypeScript","loc":183,"complexity":179,"commits":2,"added":2,"deleted":2,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1792061333,"score":14},{"path":"docs/.vitepress/theme/index.ts","language":"TypeScript","loc":29,"complexity":25,"commits":4,"added":21,"deleted":17,"bugfixes":0,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1787380614,"score":13},{"path":"packages/vite/bin/vite.js","language":"JavaScript","loc":82,"complexity":107,"commits":2,"added":17,"deleted":6,"bugfixes":0,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1787380614,"score":13},{"path":"packages/vite/client.d.ts","language":"TypeScript","loc":260,"complexity":127,"commits":2,"added":6,"deleted":0,"bugfixes":1,"authors":2,"topAuthor":"dev-33","topAuthorShare":0.5,"lastChanged":1781172540,"score":13},{"path":"packages/vite/src/module-runner/types.ts","language":"TypeScript","loc":124,"complexity":106,"commits":2,"added":10,"deleted":6,"bugfixes":1,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1787380614,"score":13},{"path":"packages/vite/types/importGlob.d.ts","language":"TypeScript","loc":124,"complexity":122,"commits":2,"added":48,"deleted":6,"bugfixes":0,"authors":2,"topAuthor":"dev-2","topAuthorShare":0.5,"lastChanged":1781172491,"score":13},{"path":"docs/.vitepress/theme/landing/Layout.vue","language":"Vue","loc":43,"complexity":30,"commits":3,"added":55,"deleted":9,"bugfixes":0,"authors":3,"topAuthor":"dev-1","topAuthorShare":0.3333333333333333,"lastChanged":1787380614,"score":12},{"path":"packages/create-vite/tsdown.config.ts","language":"TypeScript","loc":127,"complexity":82,"commits":2,"added":8,"deleted":1,"bugfixes":0,"authors":2,"topAuthor":"dev-2","topAuthorShare":0.5,"lastChanged":1790247605,"score":12},{"path":"packages/vite/src/module-runner/createImportMeta.ts","language":"TypeScript","loc":52,"complexity":71,"commits":2,"added":5,"deleted":12,"bugfixes":2,"authors":2,"topAuthor":"dev-161","topAuthorShare":0.5,"lastChanged":1772802873,"score":12},{"path":"packages/vite/src/module-runner/esmEvaluator.ts","language":"TypeScript","loc":47,"complexity":81,"commits":2,"added":7,"deleted":4,"bugfixes":1,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1782958751,"score":12},{"path":"packages/vite/src/node/server/environments/runnableEnvironment.ts","language":"TypeScript","loc":67,"complexity":77,"commits":2,"added":5,"deleted":10,"bugfixes":0,"authors":2,"topAuthor":"dev-2","topAuthorShare":0.5,"lastChanged":1788757823,"score":12},{"path":"packages/vite/src/node/server/searchRoot.ts","language":"TypeScript","loc":82,"complexity":73,"commits":2,"added":24,"deleted":2,"bugfixes":1,"authors":2,"topAuthor":"dev-16","topAuthorShare":0.5,"lastChanged":1776407233,"score":12},{"path":"oxlint.config.ts","language":"TypeScript","loc":280,"complexity":749,"commits":1,"added":289,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1792061333,"score":12},{"path":"packages/vite/src/types/ws.d.ts","language":"TypeScript","loc":523,"complexity":900,"commits":1,"added":2,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1792061333,"score":12},{"path":"packages/vite/src/node/ssr/ssrManifestPlugin.ts","language":"TypeScript","loc":111,"complexity":563,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":11},{"path":"packages/create-vite/template-preact-ts/src/app.css","language":"CSS","loc":169,"complexity":233,"commits":1,"added":185,"deleted":14,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/create-vite/template-preact/src/app.css","language":"CSS","loc":169,"complexity":233,"commits":1,"added":185,"deleted":14,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/create-vite/template-qwik-ts/src/app.css","language":"CSS","loc":169,"complexity":233,"commits":1,"added":186,"deleted":14,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/create-vite/template-qwik/src/app.css","language":"CSS","loc":169,"complexity":233,"commits":1,"added":186,"deleted":14,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/create-vite/template-react-ts/src/App.css","language":"CSS","loc":158,"complexity":224,"commits":1,"added":169,"deleted":27,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/create-vite/template-react/src/App.css","language":"CSS","loc":158,"complexity":224,"commits":1,"added":169,"deleted":27,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/create-vite/template-solid-ts/src/App.css","language":"CSS","loc":158,"complexity":224,"commits":1,"added":175,"deleted":18,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/create-vite/template-solid/src/App.css","language":"CSS","loc":158,"complexity":224,"commits":1,"added":175,"deleted":18,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/create-vite/template-svelte-ts/src/app.css","language":"CSS","loc":258,"complexity":320,"commits":1,"added":263,"deleted":46,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/create-vite/template-svelte-ts/src/App.svelte","language":"Svelte","loc":85,"complexity":241,"commits":1,"added":80,"deleted":38,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/create-vite/template-svelte/src/app.css","language":"CSS","loc":258,"complexity":320,"commits":1,"added":263,"deleted":46,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/create-vite/template-svelte/src/App.svelte","language":"Svelte","loc":85,"complexity":241,"commits":1,"added":79,"deleted":37,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/create-vite/template-vanilla-ts/src/style.css","language":"CSS","loc":258,"complexity":320,"commits":1,"added":260,"deleted":60,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497240,"score":10},{"path":"packages/create-vite/template-vanilla/src/style.css","language":"CSS","loc":258,"complexity":320,"commits":1,"added":260,"deleted":60,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497240,"score":10},{"path":"packages/create-vite/template-vue-ts/src/style.css","language":"CSS","loc":258,"complexity":320,"commits":1,"added":263,"deleted":46,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/create-vite/template-vue/src/style.css","language":"CSS","loc":258,"complexity":320,"commits":1,"added":263,"deleted":46,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":10},{"path":"packages/vite/scripts/benchCircularImport.ts","language":"TypeScript","loc":184,"complexity":256,"commits":1,"added":218,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-57","topAuthorShare":1,"lastChanged":1771227857,"score":10},{"path":"packages/vite/src/node/assetSource.ts","language":"TypeScript","loc":172,"complexity":239,"commits":1,"added":45,"deleted":7,"bugfixes":0,"authors":1,"topAuthor":"dev-25","topAuthorShare":1,"lastChanged":1780373118,"score":10},{"path":"packages/vite/src/node/baseEnvironment.ts","language":"TypeScript","loc":127,"complexity":272,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":10},{"path":"packages/vite/src/node/external.ts","language":"TypeScript","loc":141,"complexity":255,"commits":1,"added":2,"deleted":2,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":10},{"path":"packages/vite/src/node/server/middlewares/error.ts","language":"TypeScript","loc":100,"complexity":276,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":10},{"path":"packages/plugin-legacy/tsdown.config.ts","language":"TypeScript","loc":10,"complexity":8,"commits":4,"added":5,"deleted":62,"bugfixes":0,"authors":3,"topAuthor":"dev-3","topAuthorShare":0.5,"lastChanged":1792064721,"score":9},{"path":"packages/vite/src/types/alias.d.ts","language":"TypeScript","loc":50,"complexity":11,"commits":3,"added":3,"deleted":2,"bugfixes":1,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.6666666666666666,"lastChanged":1787041465,"score":9},{"path":"packages/vite/scripts/generateTarget.ts","language":"TypeScript","loc":31,"complexity":25,"commits":2,"added":16,"deleted":1,"bugfixes":0,"authors":2,"topAuthor":"dev-168","topAuthorShare":0.5,"lastChanged":1767765120,"score":9},{"path":"packages/vite/src/types/shims.d.ts","language":"TypeScript","loc":28,"complexity":28,"commits":2,"added":3,"deleted":0,"bugfixes":1,"authors":1,"topAuthor":"dev-5","topAuthorShare":1,"lastChanged":1787303277,"score":9},{"path":"scripts/releaseUtils.ts","language":"TypeScript","loc":20,"complexity":21,"commits":2,"added":2,"deleted":49,"bugfixes":0,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1787285927,"score":9},{"path":"docs/.vitepress/theme/live/Events.vue","language":"Vue","loc":87,"complexity":160,"commits":1,"added":90,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-17","topAuthorShare":1,"lastChanged":1773162431,"score":9},{"path":"docs/.vitepress/theme/live/useYoutubePlayer.ts","language":"TypeScript","loc":99,"complexity":179,"commits":1,"added":122,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-17","topAuthorShare":1,"lastChanged":1773919871,"score":9},{"path":"packages/vite/src/node/plugins/esbuildBannerFooterCompatPlugin.ts","language":"TypeScript","loc":54,"complexity":149,"commits":1,"added":2,"deleted":2,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":9},{"path":"packages/vite/src/node/server/send.ts","language":"TypeScript","loc":91,"complexity":130,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":9},{"path":"packages/vite/src/node/server/warmup.ts","language":"TypeScript","loc":94,"complexity":162,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":9},{"path":"packages/vite/src/shared/pretty-format.ts","language":"TypeScript","loc":143,"complexity":140,"commits":1,"added":157,"deleted":0,"bugfixes":1,"authors":1,"topAuthor":"dev-14","topAuthorShare":1,"lastChanged":1790303141,"score":9},{"path":"packages/vite/src/types/connect.d.ts","language":"TypeScript","loc":99,"complexity":168,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1792061333,"score":9},{"path":"packages/vite/src/node/environment.ts","language":"TypeScript","loc":29,"complexity":19,"commits":2,"added":5,"deleted":7,"bugfixes":1,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1787380614,"score":8},{"path":"docs/.vitepress/buildEnd.config.ts","language":"TypeScript","loc":44,"complexity":78,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":8},{"path":"docs/.vitepress/theme/live/Timer.vue","language":"Vue","loc":60,"complexity":91,"commits":1,"added":71,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-17","topAuthorShare":1,"lastChanged":1773162431,"score":8},{"path":"packages/create-vite/template-preact-ts/src/index.css","language":"CSS","loc":100,"complexity":96,"commits":1,"added":88,"deleted":45,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":8},{"path":"packages/create-vite/template-preact/src/index.css","language":"CSS","loc":100,"complexity":96,"commits":1,"added":88,"deleted":45,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":8},{"path":"packages/create-vite/template-qwik-ts/src/index.css","language":"CSS","loc":100,"complexity":96,"commits":1,"added":88,"deleted":45,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":8},{"path":"packages/create-vite/template-qwik/src/index.css","language":"CSS","loc":100,"complexity":96,"commits":1,"added":88,"deleted":45,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":8},{"path":"packages/create-vite/template-react-ts/src/index.css","language":"CSS","loc":100,"complexity":96,"commits":1,"added":88,"deleted":45,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":8},{"path":"packages/create-vite/template-react/src/index.css","language":"CSS","loc":100,"complexity":96,"commits":1,"added":88,"deleted":45,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":8},{"path":"packages/create-vite/template-solid-ts/src/index.css","language":"CSS","loc":100,"complexity":96,"commits":1,"added":88,"deleted":45,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":8},{"path":"packages/create-vite/template-solid/src/index.css","language":"CSS","loc":100,"complexity":96,"commits":1,"added":88,"deleted":45,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":8},{"path":"packages/vite/bin/openChrome.js","language":"JavaScript","loc":59,"complexity":78,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-46","topAuthorShare":1,"lastChanged":1781108006,"score":8},{"path":"packages/vite/src/node/__tests_dts__/config.ts","language":"TypeScript","loc":94,"complexity":95,"commits":1,"added":57,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1772090532,"score":8},{"path":"packages/vite/src/node/__tests_dts__/importGlob.ts","language":"TypeScript","loc":88,"complexity":95,"commits":1,"added":101,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-115","topAuthorShare":1,"lastChanged":1780466034,"score":8},{"path":"packages/vite/src/node/deprecations.ts","language":"TypeScript","loc":91,"complexity":117,"commits":1,"added":9,"deleted":9,"bugfixes":1,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1770639721,"score":8},{"path":"packages/vite/src/node/server/environments/fetchableEnvironments.ts","language":"TypeScript","loc":55,"complexity":73,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":8},{"path":"packages/vite/src/node/server/middlewares/hostCheck.ts","language":"TypeScript","loc":57,"complexity":83,"commits":1,"added":4,"deleted":4,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1780377180,"score":8},{"path":"packages/vite/src/shared/ssrTransform.ts","language":"TypeScript","loc":54,"complexity":71,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-2","topAuthorShare":1,"lastChanged":1788757823,"score":8},{"path":"packages/vite/src/node/plugins/json.ts","language":"TypeScript","loc":18,"complexity":13,"commits":2,"added":1,"deleted":144,"bugfixes":0,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1769584880,"score":7},{"path":"docs/.vitepress/theme/components/ScrimbaLink.vue","language":"Vue","loc":54,"complexity":44,"commits":1,"added":56,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-125","topAuthorShare":1,"lastChanged":1769413073,"score":7},{"path":"packages/vite/src/module-runner/sourcemap/decoder.ts","language":"TypeScript","loc":62,"complexity":64,"commits":1,"added":5,"deleted":2,"bugfixes":1,"authors":1,"topAuthor":"dev-9","topAuthorShare":1,"lastChanged":1760939782,"score":7},{"path":"packages/vite/src/node/ssr/index.ts","language":"TypeScript","loc":63,"complexity":65,"commits":1,"added":4,"deleted":2,"bugfixes":0,"authors":1,"topAuthor":"dev-3","topAuthorShare":1,"lastChanged":1760942034,"score":7},{"path":"vitest.config.ts","language":"TypeScript","loc":33,"complexity":59,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1764902742,"score":7},{"path":"docs/.vitepress/theme/landing/Frameworks.vue","language":"Vue","loc":16,"complexity":34,"commits":1,"added":16,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-29","topAuthorShare":1,"lastChanged":1768295958,"score":6},{"path":"packages/create-vite/template-lit-ts/index.html","language":"HTML","loc":16,"complexity":23,"commits":1,"added":2,"deleted":2,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":6},{"path":"packages/create-vite/template-lit/index.html","language":"HTML","loc":16,"complexity":23,"commits":1,"added":2,"deleted":2,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":6},{"path":"packages/vite/src/node/__tests_dts__/plugin.ts","language":"TypeScript","loc":39,"complexity":23,"commits":1,"added":2,"deleted":2,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":6},{"path":"packages/vite/src/node/server/middlewares/rejectInvalidRequest.ts","language":"TypeScript","loc":22,"complexity":34,"commits":1,"added":3,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1765186561,"score":6},{"path":"packages/vite/types/metadata.d.ts","language":"TypeScript","loc":41,"complexity":37,"commits":1,"added":9,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-47","topAuthorShare":1,"lastChanged":1770028704,"score":6},{"path":"scripts/prepare-release.ts","language":"TypeScript","loc":44,"complexity":33,"commits":1,"added":50,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787285927,"score":6},{"path":"packages/create-vite/template-svelte-ts/src/lib/Counter.svelte","language":"Svelte","loc":9,"complexity":6,"commits":2,"added":3,"deleted":3,"bugfixes":1,"authors":2,"topAuthor":"dev-105","topAuthorShare":0.5,"lastChanged":1776920433,"score":5},{"path":"docs/.vitepress/theme/components/VersionsList.vue","language":"Vue","loc":15,"complexity":14,"commits":1,"added":17,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1785484594,"score":5},{"path":"docs/.vitepress/theme/live/TimeoutSwitcher.vue","language":"Vue","loc":30,"complexity":18,"commits":1,"added":36,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-17","topAuthorShare":1,"lastChanged":1773162431,"score":5},{"path":"packages/create-vite/template-lit-ts/src/index.css","language":"CSS","loc":22,"complexity":17,"commits":1,"added":13,"deleted":27,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/create-vite/template-lit/src/index.css","language":"CSS","loc":22,"complexity":17,"commits":1,"added":14,"deleted":19,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/create-vite/template-preact-ts/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/create-vite/template-preact/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/create-vite/template-qwik-ts/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/create-vite/template-qwik/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":2,"deleted":2,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/create-vite/template-react-ts/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/create-vite/template-react/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/create-vite/template-solid-ts/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/create-vite/template-solid/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/create-vite/template-svelte-ts/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/create-vite/template-svelte/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/create-vite/template-vanilla-ts/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497240,"score":5},{"path":"packages/create-vite/template-vanilla/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":2,"deleted":2,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497240,"score":5},{"path":"packages/create-vite/template-vue-ts/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/create-vite/template-vue/index.html","language":"HTML","loc":13,"complexity":16,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":5},{"path":"packages/vite/src/node/server/middlewares/time.ts","language":"TypeScript","loc":17,"complexity":19,"commits":1,"added":2,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-2","topAuthorShare":1,"lastChanged":1790845014,"score":5},{"path":"packages/vite/src/shared/builtin.ts","language":"TypeScript","loc":12,"complexity":12,"commits":1,"added":13,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-97","topAuthorShare":1,"lastChanged":1761121997,"score":5},{"path":"packages/vite/src/types/dynamicImportVars.d.ts","language":"TypeScript","loc":16,"complexity":14,"commits":1,"added":1,"deleted":2,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1769166076,"score":5},{"path":"packages/vite/types/internal/cssPreprocessorOptions.d.ts","language":"TypeScript","loc":36,"complexity":15,"commits":1,"added":2,"deleted":2,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":5},{"path":"packages/plugin-legacy/src/snippets.ts","language":"TypeScript","loc":25,"complexity":2,"commits":4,"added":31,"deleted":15,"bugfixes":1,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.75,"lastChanged":1781489802,"score":4},{"path":"packages/create-vite/template-qwik-ts/vite.config.ts","language":"TypeScript","loc":10,"complexity":9,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":4},{"path":"packages/create-vite/template-qwik/vite.config.js","language":"JavaScript","loc":10,"complexity":9,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":4},{"path":"packages/create-vite/template-vanilla-ts/src/counter.ts","language":"TypeScript","loc":9,"complexity":9,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497240,"score":4},{"path":"packages/create-vite/template-vanilla/src/counter.js","language":"JavaScript","loc":9,"complexity":9,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497240,"score":4},{"path":"scripts/detect-release.ts","language":"TypeScript","loc":16,"complexity":8,"commits":1,"added":19,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787285927,"score":4},{"path":"scripts/docs-check.sh","language":"Shell","loc":10,"complexity":2,"commits":2,"added":5,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1770863723,"score":3},{"path":"packages/vite/src/node/__tests_dts__/postcss.ts","language":"TypeScript","loc":15,"complexity":5,"commits":1,"added":20,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-104","topAuthorShare":1,"lastChanged":1784202134,"score":3},{"path":"packages/create-vite/template-svelte/src/lib/Counter.svelte","language":"Svelte","loc":4,"complexity":1,"commits":2,"added":2,"deleted":7,"bugfixes":1,"authors":2,"topAuthor":"dev-105","topAuthorShare":0.5,"lastChanged":1776920433,"score":2},{"path":"packages/create-vite/template-vue-ts/src/App.vue","language":"Vue","loc":6,"complexity":1,"commits":2,"added":3,"deleted":26,"bugfixes":1,"authors":2,"topAuthor":"dev-166","topAuthorShare":0.5,"lastChanged":1773385203,"score":2},{"path":"docs/.vitepress/theme/styles.css","language":"CSS","loc":14,"complexity":3,"commits":1,"added":18,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-29","topAuthorShare":1,"lastChanged":1768295958,"score":2},{"path":"packages/vite/src/module-runner/__tests_dts__/importMeta.ts","language":"TypeScript","loc":17,"complexity":3,"commits":1,"added":20,"deleted":0,"bugfixes":1,"authors":1,"topAuthor":"dev-161","topAuthorShare":1,"lastChanged":1772802873,"score":2},{"path":"packages/create-vite/template-preact-ts/vite.config.ts","language":"TypeScript","loc":6,"complexity":1,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":1},{"path":"packages/create-vite/template-preact/vite.config.js","language":"JavaScript","loc":6,"complexity":1,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":1},{"path":"packages/create-vite/template-react-ts/vite.config.ts","language":"TypeScript","loc":6,"complexity":1,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":1},{"path":"packages/create-vite/template-react/vite.config.js","language":"JavaScript","loc":6,"complexity":1,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":1},{"path":"packages/create-vite/template-svelte-ts/vite.config.ts","language":"TypeScript","loc":6,"complexity":1,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":1},{"path":"packages/create-vite/template-svelte/vite.config.js","language":"JavaScript","loc":6,"complexity":1,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":1},{"path":"packages/create-vite/template-vue-ts/vite.config.ts","language":"TypeScript","loc":6,"complexity":1,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":1},{"path":"packages/create-vite/template-vue/src/App.vue","language":"Vue","loc":6,"complexity":1,"commits":1,"added":1,"deleted":24,"bugfixes":0,"authors":1,"topAuthor":"dev-10","topAuthorShare":1,"lastChanged":1769497729,"score":1},{"path":"packages/create-vite/template-vue/vite.config.js","language":"JavaScript","loc":6,"complexity":1,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787380614,"score":1},{"path":"scripts/extract-changelog.ts","language":"TypeScript","loc":7,"complexity":1,"commits":1,"added":9,"deleted":0,"bugfixes":0,"authors":1,"topAuthor":"dev-1","topAuthorShare":1,"lastChanged":1787285927,"score":1},{"path":"packages/vite/types/internal/devtoolsOptions.d.ts","language":"TypeScript","loc":6,"complexity":0,"commits":2,"added":12,"deleted":3,"bugfixes":0,"authors":2,"topAuthor":"dev-1","topAuthorShare":0.5,"lastChanged":1792061333,"score":0},{"path":"packages/create-vite/template-svelte-ts/svelte.config.js","language":"JavaScript","loc":2,"complexity":0,"commits":1,"added":1,"deleted":7,"bugfixes":0,"authors":1,"topAuthor":"dev-30","topAuthorShare":1,"lastChanged":1771220333,"score":0},{"path":"packages/create-vite/template-svelte/svelte.config.js","language":"JavaScript","loc":2,"complexity":0,"commits":1,"added":1,"deleted":7,"bugfixes":0,"authors":1,"topAuthor":"dev-30","topAuthorShare":1,"lastChanged":1771220333,"score":0},{"path":"packages/vite/src/node/internalIndex.ts","language":"TypeScript","loc":1,"complexity":0,"commits":1,"added":1,"deleted":1,"bugfixes":0,"authors":1,"topAuthor":"dev-6","topAuthorShare":1,"lastChanged":1763530272,"score":0},{"path":"docs/_data/blog.data.ts","language":"TypeScript","loc":37,"complexity":62,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"docs/.vitepress/theme/components/BlogIndex.vue","language":"Vue","loc":43,"complexity":50,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"docs/.vitepress/theme/components/NonInheritBadge.vue","language":"Vue","loc":8,"complexity":9,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"docs/.vitepress/theme/components/SvgImage.vue","language":"Vue","loc":20,"complexity":7,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"docs/.vitepress/theme/components/YouTubeVideo.vue","language":"Vue","loc":41,"complexity":65,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/index.js","language":"JavaScript","loc":2,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-preact-ts/src/main.tsx","language":"TypeScript","loc":4,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-preact/src/main.jsx","language":"JavaScript","loc":4,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-qwik-ts/src/main.tsx","language":"TypeScript","loc":5,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-qwik/src/main.jsx","language":"JavaScript","loc":5,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-react-ts/src/main.tsx","language":"TypeScript","loc":9,"complexity":4,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-react/src/main.jsx","language":"JavaScript","loc":9,"complexity":4,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-solid-ts/src/index.tsx","language":"TypeScript","loc":6,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-solid-ts/vite.config.ts","language":"TypeScript","loc":5,"complexity":1,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-solid/src/index.jsx","language":"JavaScript","loc":6,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-solid/vite.config.js","language":"JavaScript","loc":5,"complexity":1,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-svelte-ts/src/main.ts","language":"TypeScript","loc":7,"complexity":1,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-svelte/src/main.js","language":"JavaScript","loc":7,"complexity":1,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-vue-ts/src/main.ts","language":"TypeScript","loc":4,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/create-vite/template-vue/src/main.js","language":"JavaScript","loc":4,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/plugin-legacy/src/shims.d.ts","language":"TypeScript","loc":2,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/plugin-legacy/src/types.ts","language":"TypeScript","loc":38,"complexity":36,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/misc/false.d.ts","language":"TypeScript","loc":2,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/misc/false.js","language":"JavaScript","loc":1,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/misc/true.d.ts","language":"TypeScript","loc":2,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/misc/true.js","language":"JavaScript","loc":1,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/client/clientEntry.ts","language":"TypeScript","loc":11,"complexity":5,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/client/env.ts","language":"TypeScript","loc":26,"complexity":31,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/module-runner/constants.ts","language":"TypeScript","loc":7,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/module-runner/hmrLogger.ts","language":"TypeScript","loc":10,"complexity":4,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/module-runner/index.ts","language":"TypeScript","loc":38,"complexity":21,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/module-runner/sourcemap/index.ts","language":"TypeScript","loc":27,"complexity":52,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/node/__tests_dts__/typeOptions.ts","language":"TypeScript","loc":17,"complexity":5,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/node/__tests_dts__/utils.ts","language":"TypeScript","loc":50,"complexity":39,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/node/publicDir.ts","language":"TypeScript","loc":56,"complexity":57,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/node/server/middlewares/notFound.ts","language":"TypeScript","loc":8,"complexity":7,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/node/ssr/runnerImport.ts","language":"TypeScript","loc":74,"complexity":186,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/node/typeUtils.ts","language":"TypeScript","loc":21,"complexity":24,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/shared/constants.ts","language":"TypeScript","loc":21,"complexity":1,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/shared/hmrHandler.ts","language":"TypeScript","loc":45,"complexity":86,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/types/anymatch.d.ts","language":"TypeScript","loc":4,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/src/types/commonjs.d.ts","language":"TypeScript","loc":229,"complexity":229,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/types/hot.d.ts","language":"TypeScript","loc":33,"complexity":38,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/types/import-meta.d.ts","language":"TypeScript","loc":4,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/types/importMeta.d.ts","language":"TypeScript","loc":23,"complexity":11,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/types/internal/esbuildOptions.d.ts","language":"TypeScript","loc":22,"complexity":11,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/types/internal/lightningcssOptions.d.ts","language":"TypeScript","loc":15,"complexity":9,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/types/internal/rollupTypeCompat.d.ts","language":"TypeScript","loc":16,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"packages/vite/types/internal/terserOptions.d.ts","language":"TypeScript","loc":8,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0},{"path":"scripts/publishCI.ts","language":"TypeScript","loc":2,"complexity":0,"commits":0,"added":0,"deleted":0,"bugfixes":0,"authors":0,"topAuthor":"","topAuthorShare":0,"lastChanged":0,"score":0}],"couplings":[{"a":"docs/.vitepress/theme/live/Layout.vue","b":"docs/.vitepress/theme/live/VideoIframe.vue","shared":3,"degree":0.75},{"a":"packages/vite/src/client/client.ts","b":"packages/vite/types/customEvent.d.ts","shared":4,"degree":0.5},{"a":"packages/vite/src/node/plugins/dynamicImportVars.ts","b":"packages/vite/src/node/plugins/modulePreloadPolyfill.ts","shared":4,"degree":0.5},{"a":"packages/vite/types/customEvent.d.ts","b":"packages/vite/types/hmrPayload.d.ts","shared":3,"degree":0.6}]};
+(function () {
+  'use strict';
+  if (!DATA) { document.body.innerHTML = '<p style="padding:40px">No data. Generate a report with <code>npx repoheat</code>.</p>'; return; }
+
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, attrs, ...kids) => {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (k === 'class') n.className = v; else if (k === 'style') n.style.cssText = v;
+      else if (k.startsWith('on')) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+    }
+    for (const kid of kids) if (kid != null) n.append(kid.nodeType ? kid : String(kid));
+    return n;
+  };
+  const fmt = (n) => Number(n).toLocaleString('en-US');
+  const pct = (n) => Math.round(n * 100) + '%';
+  const ago = (t) => {
+    if (!t) return 'not in window';
+    const d = (Date.now() / 1000 - t) / 86400;
+    if (d < 1) return 'today';
+    if (d < 45) return Math.round(d) + ' days ago';
+    if (d < 540) return Math.round(d / 30) + ' months ago';
+    return (d / 365).toFixed(1) + ' years ago';
+  };
+  const owner = (f) => !f.topAuthor ? '—' : f.topAuthorShare > 0.5 ? f.topAuthor : 'shared';
+  const files = DATA.files;
+  const byPath = new Map(files.map((f) => [f.path, f]));
+
+  // ---------- theme ----------
+  const root = document.documentElement;
+  let theme = 'dark';
+  try { theme = localStorage.getItem('repoheat-theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'); } catch (e) {}
+  const applyTheme = () => { root.dataset.theme = theme; draw(); };
+  $('theme').onclick = () => { theme = theme === 'dark' ? 'light' : 'dark'; try { localStorage.setItem('repoheat-theme', theme); } catch (e) {} applyTheme(); renderRamp(); };
+  const css = (name) => getComputedStyle(root).getPropertyValue(name).trim();
+
+  // ---------- metrics ----------
+  const maxOf = (k) => files.reduce((m, f) => Math.max(m, f[k]), 0);
+  const logN = (v, max) => (max > 0 ? Math.log1p(v) / Math.log1p(max) : 0);
+  const maxC = maxOf('commits'), maxX = maxOf('complexity'), maxB = maxOf('bugfixes');
+  const times = files.map((f) => f.lastChanged).filter(Boolean);
+  const tMin = Math.min(...times, DATA.repo.firstCommit || Infinity), tMax = Math.max(...times, 0);
+  const METRICS = [
+    { id: 'score', label: 'Hotspots', value: (f) => f.score / 100, show: (f) => String(f.score), title: 'Top hotspots' },
+    { id: 'commits', label: 'Churn', value: (f) => logN(f.commits, maxC), show: (f) => fmt(f.commits), title: 'Most changed' },
+    { id: 'complexity', label: 'Complexity', value: (f) => logN(f.complexity, maxX), show: (f) => fmt(f.complexity), title: 'Most complex' },
+    { id: 'bugfixes', label: 'Bug fixes', value: (f) => logN(f.bugfixes, maxB), show: (f) => fmt(f.bugfixes), title: 'Most bug fixes' },
+    { id: 'owner', label: 'Ownership', value: (f) => (f.commits >= 2 ? Math.max(0, (f.topAuthorShare - 0.4) / 0.6) : 0), show: (f) => (f.commits ? pct(f.topAuthorShare) : '—'), title: 'Single-owner files' },
+    { id: 'age', label: 'Recent', value: (f) => (f.lastChanged && tMax > tMin ? (f.lastChanged - tMin) / (tMax - tMin) : 0), show: (f) => ago(f.lastChanged).replace(' ago', ''), title: 'Recently changed' },
+  ];
+  let metric = METRICS[0];
+
+  // ---------- colour ----------
+  const HOT = [[0.35, [245, 158, 11]], [0.6, [249, 115, 22]], [0.8, [234, 88, 12]], [1, [220, 38, 38]]];
+  const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+  function heat(t) {
+    const stops = [[0, hex(css('--cool'))], [0.15, hex(css('--cool-2'))], ...HOT];
+    // Ease so only genuinely hot files reach orange/red.
+    t = Math.pow(Math.max(0, Math.min(1, t)), 1.8);
+    for (let i = 1; i < stops.length; i++) {
+      if (t <= stops[i][0]) {
+        const [t0, c0] = stops[i - 1], [t1, c1] = stops[i];
+        return mix(c0, c1, (t - t0) / (t1 - t0 || 1));
+      }
+    }
+    return stops[stops.length - 1][1];
+  }
+  const rgb = (c) => `rgb(${c[0]},${c[1]},${c[2]})`;
+  const ink = (c) => (0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2] > 150 ? 'rgba(10,14,22,.85)' : 'rgba(255,255,255,.92)');
+  function renderRamp() {
+    const s = [0, 0.15, 0.35, 0.6, 0.8, 1].map((t) => `${rgb(heat(t))} ${t * 100}%`).join(',');
+    $('ramp').style.background = `linear-gradient(90deg, ${s})`;
+  }
+
+  // ---------- tree ----------
+  function buildTree() {
+    const top = { name: DATA.repo.name, path: '', children: new Map(), value: 0 };
+    for (const f of files) {
+      const parts = f.path.split('/');
+      let node = top;
+      for (let i = 0; i < parts.length - 1; i++) {
+        const p = parts.slice(0, i + 1).join('/');
+        if (!node.children.has(parts[i])) node.children.set(parts[i], { name: parts[i], path: p, children: new Map(), value: 0, parent: node });
+        node = node.children.get(parts[i]);
+      }
+      node.children.set(parts[parts.length - 1], { name: parts[parts.length - 1], path: f.path, file: f, value: Math.max(1, f.loc), parent: node });
+    }
+    (function finish(n) {
+      if (n.file) return n.value;
+      for (const c of n.children.values()) n.value += finish(c);
+      n.kids = [...n.children.values()].sort((a, b) => b.value - a.value);
+      return n.value;
+    })(top);
+    // Collapse chains like src/main/java/com/acme into one node.
+    (function compact(n) {
+      if (n.file) return;
+      while (n !== top && n.kids.length === 1 && !n.kids[0].file) {
+        const only = n.kids[0];
+        n.name += '/' + only.name; n.path = only.path; n.kids = only.kids;
+        for (const k of n.kids) k.parent = n;
+      }
+      n.kids.forEach(compact);
+    })(top);
+    return top;
+  }
+  const tree = buildTree();
+  let zoom = tree;
+
+  // ---------- squarified treemap ----------
+  function squarify(nodes, x, y, w, h) {
+    const out = [];
+    const total = nodes.reduce((s, n) => s + n.value, 0);
+    if (!total || w <= 0 || h <= 0) return out;
+    const scale = (w * h) / total;
+    const items = nodes.map((n) => ({ n, a: n.value * scale }));
+    let row = [], i = 0;
+    const worst = (r, side) => {
+      let s = 0, mx = 0, mn = Infinity;
+      for (const it of r) { s += it.a; mx = Math.max(mx, it.a); mn = Math.min(mn, it.a); }
+      const s2 = s * s, side2 = side * side;
+      return Math.max((side2 * mx) / s2, s2 / (side2 * mn));
+    };
+    const place = (r) => {
+      const s = r.reduce((t, it) => t + it.a, 0);
+      if (w >= h) {
+        const cw = s / h; let cy = y;
+        for (const it of r) { const ch = it.a / cw; out.push({ n: it.n, x, y: cy, w: cw, h: ch }); cy += ch; }
+        x += cw; w -= cw;
+      } else {
+        const rh = s / w; let cx = x;
+        for (const it of r) { const cw = it.a / rh; out.push({ n: it.n, x: cx, y, w: cw, h: rh }); cx += cw; }
+        y += rh; h -= rh;
+      }
+    };
+    while (i < items.length) {
+      const side = Math.min(w, h);
+      const next = items[i];
+      if (row.length === 0 || worst(row.concat(next), side) <= worst(row, side)) { row.push(next); i++; }
+      else { place(row); row = []; }
+    }
+    if (row.length) place(row);
+    return out;
+  }
+
+  // ---------- layout + draw ----------
+  const canvas = $('map'), ctx = canvas.getContext('2d');
+  let W = 0, H = 0, leaves = [], dirs = [];
+  let hover = null, selected = null, query = '';
+
+  function aggregate(n) {
+    if (n.file) return metric.value(n.file);
+    let m = 0;
+    for (const k of n.kids) m = Math.max(m, aggregate(k));
+    return m;
+  }
+
+  function layout() {
+    leaves = []; dirs = [];
+    const go = (n, x, y, w, h, depth) => {
+      if (n.file) { leaves.push({ n, x, y, w, h }); return; }
+      if (depth > 0) {
+        if (w < 14 || h < 14) { leaves.push({ n, x, y, w, h, agg: true }); return; }
+        // Only the top two levels get a label row; deeper folders are framed, not labelled.
+        const head = depth <= 2 && w > 54 && h > 36 ? 17 : 0;
+        const pad = head ? 2 : 1;
+        dirs.push({ n, x, y, w, h, head });
+        y += head; h -= head;
+        x += pad; y += pad === 2 ? 1 : 1; w -= pad * 2; h -= pad + 1;
+      }
+      for (const r of squarify(n.kids.filter((k) => k.value > 0), x, y, w, h)) go(r.n, r.x, r.y, r.w, r.h, depth + 1);
+    };
+    go(zoom, 0, 0, W, H, 0);
+  }
+
+  function matches(n) {
+    return !query || n.path.toLowerCase().includes(query);
+  }
+
+  function paint(c, w, h) {
+    c.fillStyle = css('--panel'); c.fillRect(0, 0, w, h);
+    c.font = '600 11.5px ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif';
+    c.textBaseline = 'middle';
+    for (const d of dirs) {
+      c.fillStyle = css('--panel-2');
+      c.fillRect(d.x + 0.5, d.y + 0.5, d.w - 1, d.h - 1);
+      if (d.head) {
+        c.fillStyle = css('--muted');
+        clipText(c, d.n.name + '/', d.x + 6, d.y + 9, d.w - 12);
+      }
+    }
+    c.font = '500 11px ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif';
+    for (const l of leaves) {
+      const t = l.agg ? aggregate(l.n) : metric.value(l.n.file);
+      const col = heat(t);
+      c.globalAlpha = query && !(l.agg ? l.n.path.toLowerCase().includes(query) || subtreeMatches(l.n) : matches(l.n)) ? 0.18 : 1;
+      c.fillStyle = rgb(col);
+      c.fillRect(l.x + 0.5, l.y + 0.5, Math.max(0, l.w - 1), Math.max(0, l.h - 1));
+      if (l.w > 38 && l.h > 15) {
+        c.fillStyle = ink(col);
+        clipText(c, l.n.name, l.x + 5, l.y + Math.min(l.h / 2, 10), l.w - 9);
+      }
+      c.globalAlpha = 1;
+    }
+  }
+  function subtreeMatches(n) {
+    if (n.file) return matches(n);
+    return n.kids.some(subtreeMatches);
+  }
+  function clipText(c, text, x, y, max) {
+    if (max < 8) return;
+    if (c.measureText(text).width <= max) { c.fillText(text, x, y); return; }
+    let lo = 0, hi = text.length;
+    while (lo < hi) { const mid = (lo + hi + 1) >> 1; c.measureText(text.slice(0, mid) + '…').width <= max ? (lo = mid) : (hi = mid - 1); }
+    if (lo > 0) c.fillText(text.slice(0, lo) + '…', x, y);
+  }
+
+  function outline(c, r, color, width) {
+    c.strokeStyle = color; c.lineWidth = width;
+    c.strokeRect(r.x + width / 2, r.y + width / 2, Math.max(0, r.w - width), Math.max(0, r.h - width));
+  }
+
+  let frame = 0;
+  function draw() {
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      const box = $('mapbox').getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      if (W !== box.width || H !== box.height || canvas.width !== Math.round(box.width * dpr)) {
+        W = box.width; H = box.height;
+        canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+        layout();
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      paint(ctx, W, H);
+      const sel = selected && leaves.find((l) => l.n.file === selected);
+      if (sel) outline(ctx, sel, css('--focus'), 2.5);
+      if (hover && hover !== sel) outline(ctx, hover, css('--focus'), 1.5);
+    });
+  }
+  const relayout = () => { layout(); draw(); };
+  new ResizeObserver(() => { W = 0; draw(); }).observe($('mapbox'));
+
+  // ---------- interaction ----------
+  const tip = $('tip');
+  function hit(e) {
+    const r = canvas.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    for (const l of leaves) if (x >= l.x && x < l.x + l.w && y >= l.y && y < l.y + l.h) return l;
+    for (let i = dirs.length - 1; i >= 0; i--) { const d = dirs[i]; if (x >= d.x && x < d.x + d.w && y >= d.y && y < d.y + d.head) return d; }
+    return null;
+  }
+  canvas.addEventListener('mousemove', (e) => {
+    const h = hit(e);
+    if (h !== hover) { hover = h; draw(); }
+    if (!h) { tip.style.display = 'none'; return; }
+    tip.replaceChildren(...tipContent(h.n));
+    tip.style.display = 'block';
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    tip.style.left = Math.min(e.clientX + 14, innerWidth - tw - 8) + 'px';
+    tip.style.top = (e.clientY + 16 + th > innerHeight ? e.clientY - th - 12 : e.clientY + 16) + 'px';
+  });
+  canvas.addEventListener('mouseleave', () => { hover = null; tip.style.display = 'none'; draw(); });
+  canvas.addEventListener('click', (e) => {
+    const h = hit(e);
+    if (!h) return;
+    if (h.n.file) select(h.n.file, false);
+    else zoomTo(h.n);
+  });
+  canvas.addEventListener('dblclick', (e) => {
+    const h = hit(e);
+    const target = h && (h.agg ? h.n : h.n.parent);
+    if (target && target !== zoom) zoomTo(target);
+  });
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && zoom.parent) zoomTo(zoom.parent);
+  });
+
+  function tipContent(n) {
+    if (!n.file) {
+      const count = (function c(x) { return x.file ? 1 : x.kids.reduce((s, k) => s + c(k), 0); })(n);
+      return [el('div', { class: 't' }, n.path + '/'), el('div', { class: 'g' }, 'files', el('b', {}, fmt(count)), 'lines', el('b', {}, fmt(n.value))), el('div', { style: 'margin-top:4px;color:var(--muted)' }, 'Click to zoom in')];
+    }
+    const f = n.file;
+    return [
+      el('div', { class: 't' }, f.path),
+      el('div', { class: 'g' },
+        'hotspot score', el('b', {}, String(f.score)),
+        'commits', el('b', {}, fmt(f.commits)),
+        'complexity', el('b', {}, fmt(f.complexity)),
+        'lines', el('b', {}, fmt(f.loc)),
+        'bug-fix commits', el('b', {}, fmt(f.bugfixes)),
+        'main author', el('b', {}, owner(f) + (f.topAuthorShare > 0.5 ? ' · ' + pct(f.topAuthorShare) : '')),
+        'last changed', el('b', {}, ago(f.lastChanged)),
+      ),
+    ];
+  }
+
+  function zoomTo(n) {
+    zoom = n; hover = null; tip.style.display = 'none';
+    renderCrumbs(); renderList(); relayout();
+  }
+  function renderCrumbs() {
+    const chain = [];
+    for (let n = zoom; n; n = n.parent) chain.unshift(n);
+    const kids = [];
+    chain.forEach((n, i) => {
+      if (i) kids.push(el('span', {}, '/'));
+      kids.push(el('button', { onclick: () => zoomTo(n), title: n.path || n.name }, n.name));
+    });
+    $('crumbs').replaceChildren(...kids);
+  }
+
+  function select(f, zoomIn) {
+    selected = f;
+    if (zoomIn) {
+      let n = tree;
+      const node = (function find(x) { if (x.file === f) return x; if (x.file) return null; for (const k of x.kids) { const r = find(k); if (r) return r; } return null; })(tree);
+      if (node && !leaves.some((l) => l.n === node)) { n = node.parent || tree; zoomTo(n); }
+    }
+    renderDetails(); renderList(); draw();
+  }
+
+  function renderDetails() {
+    const f = selected;
+    if (!f) return;
+    const coupled = DATA.couplings.filter((c) => c.a === f.path || c.b === f.path).slice(0, 5);
+    const kv = (k, v) => el('div', {}, el('b', {}, v), el('span', {}, k));
+    $('details').replaceChildren(el('div', { class: 'details' },
+      el('div', { class: 'path mono' }, f.path),
+      el('div', { class: 'kv' },
+        kv('hotspot score', String(f.score)), kv('commits', fmt(f.commits)),
+        kv('complexity', fmt(f.complexity)), kv('lines', fmt(f.loc)),
+        kv('bug-fix commits', fmt(f.bugfixes)), kv('authors', fmt(f.authors)),
+        kv('main author', owner(f)), kv('last changed', ago(f.lastChanged)),
+      ),
+      coupled.length ? el('div', { style: 'margin-top:12px;font-size:12.5px;color:var(--muted)' }, 'Changes together with:') : null,
+      coupled.length ? el('ul', { class: 'rows', style: 'padding:0' }, ...coupled.map((c) => el('li', {}, el('span', { class: 'grow mono' }, c.a === f.path ? c.b : c.a), el('span', { class: 'tag' }, c.shared + '× · ' + pct(c.degree))))) : null,
+    ));
+  }
+
+  function inZoom(f) {
+    return !zoom.path || f.path.startsWith(zoom.path + '/');
+  }
+  function renderList() {
+    $('listTitle').textContent = metric.title + (zoom.path ? ' in ' + zoom.name + '/' : '');
+    const rows = files
+      .filter((f) => inZoom(f) && (!query || f.path.toLowerCase().includes(query)))
+      .map((f) => [f, metric.value(f)])
+      .filter(([f, v]) => v > 0 || query)
+      .sort((a, b) => b[1] - a[1] || b[0].commits - a[0].commits)
+      .slice(0, 60);
+    const items = rows.map(([f, v], i) => {
+      const slash = f.path.lastIndexOf('/');
+      return el('li', { class: f === selected ? 'sel' : '', onclick: () => select(f, true), onmouseenter: () => { hover = leaves.find((l) => l.n.file === f) || null; draw(); }, onmouseleave: () => { hover = null; draw(); } },
+        el('span', { class: 'rank' }, String(i + 1)),
+        el('span', { class: 'p mono', title: f.path }, el('span', {}, el('span', { class: 'd' }, f.path.slice(0, slash + 1)), f.path.slice(slash + 1))),
+        el('span', { class: 'val' }, metric.show(f)),
+        el('span', { class: 'bar' }, el('i', { style: `width:${Math.max(2, v * 100)}%;background:${rgb(heat(v))}` })),
+      );
+    });
+    $('list').replaceChildren(...(items.length ? items : [el('li', { class: 'empty', style: 'display:block' }, 'Nothing here.')]));
+  }
+
+  function renderMetrics() {
+    $('metrics').replaceChildren(...METRICS.map((m) => el('button', { 'aria-pressed': String(m === metric), onclick: () => { metric = m; renderMetrics(); renderList(); draw(); } }, m.label)));
+  }
+
+  $('search').addEventListener('input', (e) => { query = e.target.value.trim().toLowerCase(); renderList(); draw(); });
+
+  // ---------- summary ----------
+  const T = DATA.totals, R = DATA.repo, C = DATA.concentration;
+  const windowText = !R.since || R.since === 'all time' ? 'all time' : 'last ' + R.since.replace(/\s*ago$/, '');
+  $('repo').textContent = R.name + (R.scope ? ' / ' + R.scope : '');
+  $('meta').textContent = [R.branch && R.head ? R.branch + ' @ ' + R.head : R.head, windowText, fmt(T.commits) + ' commits', fmt(T.authors) + ' authors', fmt(T.files) + ' files', fmt(T.loc) + ' lines'].filter(Boolean).join(' · ');
+  const share = C.locShare < 0.01 ? '<1%' : pct(C.locShare);
+  const stat = (cls, k, v, s) => el('div', { class: 'card stat ' + cls }, el('div', { class: 'k' }, k), el('div', { class: 'v' }, ...v), el('div', { class: 's' }, s));
+  $('stats').replaceChildren(
+    stat('hero', 'Where the work goes', C.files ? ['Half of all changes land in ', el('em', {}, share), ' of the code'] : ['No changes in this window'], C.files ? `${C.files} file${C.files === 1 ? '' : 's'} take 50% of all edits. Start refactoring there.` : 'Try a longer --since window.'),
+    stat('', 'Bus factor', [DATA.busFactor === null ? 'Shared' : String(DATA.busFactor)], DATA.busFactor === null ? 'No small group owns most of the code.' : `${DATA.busFactor === 1 ? 'person owns' : 'people own'} most of the active code.`),
+    stat('', 'Bug-fix commits', [T.commits ? pct(T.bugfixCommits / T.commits) : '—'], `${fmt(T.bugfixCommits)} of ${fmt(T.commits)} commits look like fixes.`),
+    stat('', 'Hottest file', [files[0] && files[0].score ? String(files[0].score) : '—'], files[0] && files[0].score ? files[0].path : 'No hotspots yet.'),
+  );
+  $('stats').lastChild.querySelector('.s').classList.add('mono');
+  $('stats').lastChild.querySelector('.s').style.cssText = 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+
+  const pathLink = (p) => el('span', { class: 'grow mono', style: 'cursor:pointer', onclick: () => byPath.has(p) && select(byPath.get(p), true) }, p);
+  const cp = DATA.couplings.slice(0, 8);
+  $('coupling').replaceChildren(...(cp.length ? cp.map((c) => el('li', {}, el('span', { class: 'grow' }, pathLink(c.a), el('span', { style: 'color:var(--muted)' }, '  ⇄  '), pathLink(c.b)), el('span', { class: 'tag' }, c.shared + '× · ' + pct(c.degree)))) : [el('li', { style: 'color:var(--muted)' }, 'No strong coupling found. Nice.')]));
+  const risks = files.filter((f) => f.score >= 30 && f.commits >= 3 && f.topAuthorShare >= 0.8 && T.authors > 1).slice(0, 8);
+  $('risk').replaceChildren(...(risks.length ? risks.map((f) => el('li', {}, pathLink(f.path), el('span', { class: 'tag' }, f.topAuthor + ' · ' + pct(f.topAuthorShare)))) : [el('li', { style: 'color:var(--muted)' }, T.authors > 1 ? 'Knowledge is well spread across the team.' : 'Single-author repository.')]));
+
+  $('gen').append('Generated by ', el('a', { href: 'https://github.com/ebxc-7s13/repoheat', target: '_blank', rel: 'noopener' }, 'repoheat'), ' v' + DATA.tool.version + ' · run it on your repo: ', el('code', {}, 'npx repoheat'));
+
+  // ---------- share image ----------
+  $('png').onclick = () => {
+    const w = 1600, h = 900, pad = 40, head = 120, foot = 56;
+    const out = document.createElement('canvas');
+    out.width = w * 2; out.height = h * 2;
+    const c = out.getContext('2d'); c.scale(2, 2);
+    const saved = { W, H, leaves, dirs };
+    W = w - pad * 2; H = h - head - foot; layout();
+    c.fillStyle = css('--bg'); c.fillRect(0, 0, w, h);
+    c.fillStyle = css('--text'); c.textBaseline = 'alphabetic';
+    c.font = '700 34px ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif';
+    c.fillText(R.name + (zoom.path ? ' / ' + zoom.path : ''), pad, 62);
+    c.font = '500 19px ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif';
+    c.fillStyle = css('--muted');
+    const line = C.files ? `Half of all changes land in ${share} of the code · ${metric.label} · ${windowText} · ${fmt(T.commits)} commits` : `${metric.label} · ${windowText}`;
+    c.fillText(line, pad, 94);
+    c.save(); c.translate(pad, head); paint(c, W, H); c.restore();
+    c.fillStyle = css('--accent'); c.font = '700 18px ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif';
+    c.fillText('repoheat', pad, h - 22);
+    c.fillStyle = css('--muted'); c.font = '500 16px ui-monospace, Menlo, Consolas, monospace';
+    const cta = 'npx repoheat';
+    c.fillText(cta, w - pad - c.measureText(cta).width, h - 22);
+    W = saved.W; H = saved.H; leaves = saved.leaves; dirs = saved.dirs;
+    out.toBlob((blob) => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${R.name}-repoheat.png`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    });
+  };
+
+  renderMetrics(); renderCrumbs(); renderList(); renderRamp(); applyTheme();
+  if (files[0] && files[0].score) { selected = files[0]; renderDetails(); renderList(); }
+})();
+</script>
+</body>
+</html>

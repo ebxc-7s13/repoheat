@@ -1,0 +1,30 @@
+name: Bug report
+description: Something is wrong or crashes
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you ran, what you expected, and what you got instead.
+      placeholder: |
+        npx repoheat --since "6 months ago"
+        Expected ..., got ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: repoheat version
+      placeholder: output of `npx repoheat --version`
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: OS, Node and git versions
+      placeholder: macOS 15, Node 22.4, git 2.45
+  - type: input
+    id: repo
+    attributes:
+      label: Public repo that reproduces it (if any)
