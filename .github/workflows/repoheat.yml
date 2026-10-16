@@ -1,0 +1,22 @@
+# Runs the repoheat Action on this repository. Other projects use it the same way,
+# with `uses: ebxc-7s13/repoheat@v0` instead of `uses: ./`.
+name: Hotspots
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repoheat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./
+        with:
+          top: 10

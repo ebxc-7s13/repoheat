@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+- GitHub Action now builds and runs its own code, so it works without the npm package. Pass `version` to run a specific npm release instead.
+- Fix folder scoping on Windows when paths use 8.3 short names.
+- New weekly hotspot gallery and installable website.
+
 ## 0.1.0
 
 First release.

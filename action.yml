@@ -19,8 +19,8 @@ inputs:
     description: Extra command-line flags, e.g. '--exclude "**/generated/**" --anonymize'.
     default: ''
   version:
-    description: repoheat version to run.
-    default: latest
+    description: Run this repoheat version from npm instead of the action's own code (e.g. "0.2.0"). Empty uses the action's version.
+    default: ''
   upload-report:
     description: Upload the interactive HTML heatmap as a workflow artifact.
     default: 'true'
@@ -47,8 +47,15 @@ runs:
         fi
         set -- "$RH_PATH" --top "$RH_TOP"
         [ -n "$RH_SINCE" ] && set -- "$@" --since "$RH_SINCE"
+        if [ -n "$RH_VERSION" ]; then
+          cli="npx --yes repoheat@$RH_VERSION"
+        else
+          # Build the action's own checkout, so the version always matches the tag you pinned.
+          (cd "$GITHUB_ACTION_PATH" && npm ci --no-audit --no-fund --loglevel=error >/dev/null)
+          cli="node \"$GITHUB_ACTION_PATH/dist/cli.js\""
+        fi
         report="$RUNNER_TEMP/repoheat.html"
-        eval "npx --yes repoheat@$RH_VERSION \"\$@\" $RH_ARGS --md --out \"$report\"" >> "$GITHUB_STEP_SUMMARY"
+        eval "$cli \"\$@\" $RH_ARGS --md --out \"$report\"" >> "$GITHUB_STEP_SUMMARY"
         echo "report=$report" >> "$GITHUB_OUTPUT"
     - if: inputs.upload-report == 'true'
       uses: actions/upload-artifact@v4

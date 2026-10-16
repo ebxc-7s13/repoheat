@@ -142,7 +142,7 @@ jobs:
           since: 6 months ago
 ```
 
-Inputs: `path`, `since`, `top`, `args`, `version`, `upload-report`.
+Inputs: `path`, `since`, `top`, `args`, `upload-report`, and `version` (run a specific npm release instead of the action's own code). [View on the GitHub Marketplace](https://github.com/marketplace/actions/repoheat).
 
 ## How it works
 
